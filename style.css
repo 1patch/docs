@@ -93,6 +93,24 @@ code, pre, kbd, samp {
   border: none !important;
 }
 
+/* Code-block action buttons (copy, ask-AI): the framework backs them with a
+ * backdrop-blur that, squared by our corner reset, reads as a hard frosted
+ * tile floating over the code. Drop the blur and back them with the panel
+ * color so they are clean opaque chips that still mask code scrolling under. */
+.code-block button {
+  backdrop-filter: none !important;
+  background-color: #efece3 !important;
+}
+.dark .code-block button {
+  background-color: #15161a !important;
+}
+.code-block button:hover {
+  background-color: #e7e3d9 !important;
+}
+.dark .code-block button:hover {
+  background-color: #20222a !important;
+}
+
 /* Links and inline accents track the brand vermillion. */
 a {
   text-underline-offset: 2px;

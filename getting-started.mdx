@@ -55,7 +55,7 @@ Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxx
 
 The token is **write-only** — it can send telemetry but cannot read anything back — so it is safe to commit to your source, the same way a Sentry DSN is. You can always copy the endpoint and token again later from the integrations screen.
 
-OnePatch accepts standard OTLP over HTTP — both `http/protobuf` (the OpenTelemetry SDK default) and `http/json` work, as does OTLP over gRPC. You do not need to change your exporter's protocol; the setup skill configures it for you.
+OnePatch accepts standard OTLP over HTTP — both `http/protobuf` (the OpenTelemetry SDK default) and `http/json` work. You do not need to change your exporter's protocol; the setup skill configures it for you.
 
 The setup skill is open source. You can read exactly what it does at [github.com/1patch/skills](https://github.com/1patch/skills) before you run it.
 
