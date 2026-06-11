@@ -25,6 +25,13 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Monaspace Krypton";
+  src: url("/fonts/Monaspace_Krypton_Var.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --op-paper: #f4f1ea;
@@ -58,8 +65,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
+/* Code in Monaspace Krypton — the product's --font-code (more open code glyphs),
+ * distinct from Neon used for body/UI. Matches client/src/index.css. */
 code, pre, kbd, samp {
-  font-family: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: "Monaspace Krypton", "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 /* ── Square corners. Our system has no rounded corners except pills. This is
