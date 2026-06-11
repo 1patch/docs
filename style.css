@@ -134,6 +134,15 @@ code, pre, kbd, samp {
   background-image: linear-gradient(to right, rgba(21, 22, 26, 0) 0px, rgba(21, 22, 26, 1) 45px) !important;
 }
 
+/* Nav rails are dotted. Both the left sidebar tree and the right "On this page"
+ * table of contents draw their vertical rule as a stacked left border on each
+ * link; switch the style to dotted (color untouched, so the active item keeps
+ * its solid vermillion tick by color while the rail reads as a dotted track). */
+#sidebar a[class*="border-l"],
+#table-of-contents-content a[class*="border-l"] {
+  border-left-style: dotted !important;
+}
+
 /* Links and inline accents track the brand vermillion. */
 a {
   text-underline-offset: 2px;
