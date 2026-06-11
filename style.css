@@ -111,6 +111,20 @@ code, pre, kbd, samp {
   background-color: #20222a !important;
 }
 
+/* Behind the action buttons the framework lays a fade-mask div — a hardcoded
+ * white-to-transparent gradient (the SAME in both themes; Mintlify never
+ * re-themed it) that softens code scrolling under the buttons. Over our paper /
+ * near-black panel that white fade reads as a stray lighter box. Re-point the
+ * gradient at the panel color so it still masks scroll but is invisible at rest.
+ * The mask is the bare `print:hidden` div; the button row is the flex/absolute
+ * sibling, excluded so its buttons keep their own chip background. */
+.code-block [class~="print:hidden"]:not(.flex):not(.absolute) {
+  background-image: linear-gradient(to right, rgba(239, 236, 227, 0) 0px, rgba(239, 236, 227, 1) 45px) !important;
+}
+.dark .code-block [class~="print:hidden"]:not(.flex):not(.absolute) {
+  background-image: linear-gradient(to right, rgba(21, 22, 26, 0) 0px, rgba(21, 22, 26, 1) 45px) !important;
+}
+
 /* Links and inline accents track the brand vermillion. */
 a {
   text-underline-offset: 2px;
