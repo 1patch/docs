@@ -153,6 +153,17 @@ code, pre, kbd, samp {
 .dark #table-of-contents-content a[class*="border-l"]:not([aria-current="page"]) {
   border-left-color: #6f6c64 !important;
 }
+/* The rail is a stacked per-link border, so each segment restarts the dash
+ * pattern at its own top edge and CSS has no border-dash-offset to align them.
+ * Across the uniform gray segments that's invisible, but the active item's
+ * vermillion segment lands out of phase with its gray neighbours and the
+ * mismatch reads as clashing/overlapping dashes. Draw the active tick SOLID —
+ * a solid segment has no phase to mismatch, so it abuts the dashed rail cleanly
+ * and reads as a stronger "you are here". */
+#sidebar a[aria-current="page"][class*="border-l"],
+#table-of-contents-content a[aria-current="page"][class*="border-l"] {
+  border-left-style: solid !important;
+}
 
 /* Links and inline accents track the brand vermillion. */
 a {
