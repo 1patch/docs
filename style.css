@@ -73,9 +73,24 @@ code, pre, kbd, samp {
   box-shadow: none !important;
 }
 
-/* Code blocks: ink rule, no glow. */
-pre {
+/* Code blocks: one panel, one 1px rule. Mintlify nests pre.shiki inside a
+ * padded container (.code-block > div); border the OUTER .code-block so the
+ * rule traces the panel, not the narrower inner <pre> — bordering the <pre>
+ * drew a second, misaligned outline. Neutralize the inner backgrounds so the
+ * padding and the code share one uniform surface in both themes. */
+.code-block {
   border: 1px solid var(--op-rule);
+  background-color: #efece3;
+}
+.dark .code-block {
+  background-color: #15161a;
+}
+.code-block > div,
+.code-block pre {
+  background-color: transparent !important;
+}
+.code-block pre {
+  border: none !important;
 }
 
 /* Links and inline accents track the brand vermillion. */
