@@ -1,0 +1,84 @@
+/*
+ * OnePatch brand layer for Mintlify.
+ *
+ * docs.json sets the coarse theme (accent, page background, logo). This file
+ * carries the parts docs.json can't express: the Monaspace type system, square
+ * corners, and 1px-rule depth — the load-bearing signals that make the docs
+ * read as the same product as app.onepatch.dev.
+ *
+ * Mintlify auto-includes this file (convention: style.css at the repo root,
+ * applied after the framework styles). Source tokens: client/src/index.css.
+ */
+
+/* ── Self-hosted type. Monaspace isn't on Google Fonts, so it's wired here. ── */
+@font-face {
+  font-family: "Monaspace Neon";
+  src: url("/fonts/Monaspace_Neon_Var.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Monaspace Xenon";
+  src: url("/fonts/Monaspace_Xenon_Var.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --op-paper: #f4f1ea;
+  --op-ink: #171717;
+  --op-ink-soft: #4a4744;
+  --op-rule: #171717;
+  --op-accent: #e2502c;
+}
+
+.dark {
+  --op-paper: #0a0a0b;
+  --op-ink: #e9e8e3;
+  --op-ink-soft: #ada9a0;
+  --op-rule: #99988f;
+  --op-accent: #ef6235;
+}
+
+/* ── Type. Body in Monaspace Neon, headings in Monaspace Xenon. ── */
+body,
+input,
+button,
+select,
+textarea {
+  font-family: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Monaspace Xenon", "Monaspace Neon", ui-monospace, monospace;
+  letter-spacing: -0.01em;
+}
+
+code, pre, kbd, samp {
+  font-family: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Square corners. Our system has no rounded corners except pills. This is
+ *    the single biggest "feels like us" lever. Pills (rounded-full) are kept. ── */
+*:not([class*="rounded-full"]):not(svg):not(svg *) {
+  border-radius: 0 !important;
+}
+
+/* ── Depth is a 1px rule, never a shadow. ── */
+*:not(svg):not(svg *) {
+  box-shadow: none !important;
+}
+
+/* Code blocks: ink rule, no glow. */
+pre {
+  border: 1px solid var(--op-rule);
+}
+
+/* Links and inline accents track the brand vermillion. */
+a {
+  text-underline-offset: 2px;
+}

@@ -1,0 +1,95 @@
+---
+title: Getting started
+description: From sign-up to your first dashboard, in order.
+---
+
+This guide walks you through OnePatch end to end: creating your workspace, connecting GitHub and Slack, sending telemetry from your app, and getting your first dashboard. The whole flow takes a few minutes of your time, plus a short wait while your workspace is provisioned.
+
+You do this once. After it, you work entirely in chat.
+
+## 1. Create your workspace
+
+Sign up at [app.onepatch.dev](https://app.onepatch.dev). You authenticate through WorkOS, then create an organization — give it a name and confirm your domain.
+
+Creating the organization starts provisioning your **workspace**: a private OnePatch instance with its own server and AI agent. Provisioning runs on its own and usually takes a few minutes. The setup screen shows live progress, and the onboarding chat tells you when your workspace is online. You can read the rest of this guide while you wait.
+
+<Note>
+A workspace is yours alone. Your telemetry, your repositories, and your agent's work all live inside it and are not shared across organizations.
+</Note>
+
+## 2. Connect GitHub
+
+The agent reads and writes your repositories — it explores your code to understand your services, and it opens pull requests when it has a fix. Connecting GitHub has three quick steps, shown in order by the onboarding chat:
+
+<Steps>
+  <Step title="Authorize OnePatch">
+    Click **Connect GitHub**. This opens an OAuth popup and grants OnePatch access to your account.
+  </Step>
+  <Step title="Install the GitHub App">
+    Install the OnePatch GitHub App on the account that owns the repositories you want to use.
+  </Step>
+  <Step title="Pair at least one repository">
+    Select the repositories to make available to your workspace. You can add or remove repositories later from the integrations screen.
+  </Step>
+</Steps>
+
+## 3. Connect Slack
+
+Click **Connect Slack** and authorize the workspace. OnePatch creates an `#onepatch-alerts` channel and posts there when a monitor fires. This is where incident notifications land, so connect the Slack workspace your team actually watches.
+
+## 4. Send telemetry from your app
+
+OnePatch reads OpenTelemetry. To send it, you instrument your application once. The onboarding chat hands you a single block to paste into your coding agent — Claude Code, Cursor, or similar — which installs a setup skill and wires up the OpenTelemetry SDK for you.
+
+The block looks like this, with your own endpoint and token filled in:
+
+```text
+Set up OnePatch OTel for this service.
+
+First, install the setup skill (one-time):
+npx skills add 1patch/skills -s otel-instrument
+
+Then set up OTel with the URL and write-only token.
+Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+```
+
+The token is **write-only** — it can send telemetry but cannot read anything back — so it is safe to commit to your source, the same way a Sentry DSN is. You can always copy the endpoint and token again later from the integrations screen.
+
+<Warning>
+Send OpenTelemetry over **HTTP with JSON encoding** (`http/protobuf` is not accepted). Set your exporter protocol to `http/json`. The setup skill does this for you; if you wire the SDK by hand, set it explicitly, because protobuf payloads are rejected at ingest.
+</Warning>
+
+After the skill finishes, commit and push the changes. Your app starts sending telemetry the next time it runs.
+
+## 5. Get your first dashboard
+
+When your first telemetry arrives, the agent reads the `TELEMETRY.md` file the setup skill wrote at your repository root — a short description of what your service emits — and drafts a first dashboard from it. It appears in the side pane next to the chat and refreshes as more data lands.
+
+From here, you change it by asking. For example:
+
+```text
+Add a panel for p95 latency by route, and drop the host CPU chart.
+```
+
+The agent edits the dashboard in place and it reloads.
+
+## Where to go next
+
+Your workspace is now set up. The rest of the app is available from the left navigation:
+
+<CardGroup cols={2}>
+  <Card title="Chats" icon="comments">
+    Talk to the agent. Ask it to build dashboards and monitors, investigate your data, explore your code, or open a pull request.
+  </Card>
+  <Card title="Dashboards" icon="chart-line">
+    Browse the dashboards the agent has authored. They update live as telemetry arrives.
+  </Card>
+  <Card title="Monitors" icon="gauge">
+    See every monitor, its schedule, and its current state.
+  </Card>
+  <Card title="Integrations" icon="plug">
+    Manage connected repositories and Slack, and copy your telemetry endpoint and token.
+  </Card>
+</CardGroup>
+
+To understand the model underneath all of this, read [How OnePatch works](/how-onepatch-works).

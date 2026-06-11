@@ -1,0 +1,39 @@
+---
+title: Incidents and Slack
+description: What happens when a monitor fires.
+---
+
+When a monitor detects a problem, OnePatch has two responses depending on whether the monitor is armed. This page describes both, and where the notifications land.
+
+## When an unarmed monitor fires
+
+Most monitors are unarmed, which is the right default. When an unarmed monitor fires, OnePatch records the firing — its state, its reason, and the time — as telemetry you can query and chart, and it posts a notification to your `#onepatch-alerts` Slack channel. No further action is taken automatically; you decide what to do.
+
+## When an armed monitor fires
+
+An **armed** monitor escalates. When it fires, OnePatch opens an **incident** and hands it to the agent to triage. The agent:
+
+1. Investigates the firing against your live telemetry to understand what happened.
+2. Either tunes the monitor, if the firing was a false alarm, or opens a pull request against your repository, if it found a real problem.
+
+You see the incident and follow the agent's work, and you review any pull request before it merges. Arming is opt-in per monitor — ask the agent to arm a monitor only when a firing genuinely warrants an automated response.
+
+<Note>
+OnePatch opens one incident per firing episode, not one per evaluation. A monitor on a fast schedule that stays firing produces a single incident, and it cools down after the incident resolves, so you are not paged repeatedly for the same event.
+</Note>
+
+## Slack
+
+OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. Monitor notifications and incident summaries post there. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
+
+If you need to reconnect Slack or change the workspace, do it from the **Integrations** screen.
+
+## Reading firing history
+
+Because every firing is recorded as telemetry, you can ask the agent to chart it. For example:
+
+```text
+Show me how often the error-rate monitor fired over the last week.
+```
+
+The agent builds a dashboard from the monitor's own history, the same way it builds one from your application's telemetry.

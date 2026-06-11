@@ -1,0 +1,89 @@
+---
+title: Monitors and dashboards
+description: How the agent authors them, and how they go live.
+---
+
+Monitors and dashboards are the two things the agent builds for you. You do not write either by hand — you describe what you want in chat, and the agent writes the code. This page explains what each one is and how it goes live, so the agent's output is legible to you.
+
+## Dashboards
+
+A dashboard is a live view of your telemetry. You ask for one in plain language:
+
+```text
+Build a dashboard showing request rate, p95 latency by route,
+and error count over the last 24 hours.
+```
+
+The agent queries your telemetry to confirm the data exists, then writes a `Dashboard.tsx` file in your workspace. It appears in the side pane next to the chat and reloads as you refine it. Each panel refreshes on its own as new telemetry lands, so an open dashboard stays current without a manual refresh.
+
+To change a dashboard, ask. The agent edits the existing file rather than starting over:
+
+```text
+Drop the CPU panel and add a table of the 20 slowest requests this hour.
+```
+
+## Monitors
+
+A monitor watches a window of your telemetry on a schedule and reports one of three states: `healthy`, `firing`, or `unknown`. You ask for one the same way:
+
+```text
+Alert me if the error rate over the last 5 minutes goes above 10 per minute.
+```
+
+The agent writes the monitor as a small TypeScript program in your workspace under `monitors/`. A monitor the agent produces for that request looks like this:
+
+```ts
+import type { Monitor } from "@1patch/monitor-api";
+
+const THRESHOLD_PER_MIN = 10;
+const WINDOW_MIN = 5;
+
+const monitor: Monitor = {
+  id: "error-log-rate-5m",
+  cron: "*/30 * * * * *", // evaluate every 30 seconds
+  description: "Fires when the error-log rate over the last 5 minutes exceeds 10/min.",
+  async evaluate(ctx) {
+    const rows = await ctx.queryDuckDB(`
+      SELECT COUNT(*) AS n
+      FROM otel.logs
+      WHERE severity_text = 'ERROR'
+        AND ts >= now() - INTERVAL '${WINDOW_MIN}' MINUTE
+    `);
+    const rate = Number(rows[0]?.n ?? 0) / WINDOW_MIN;
+    if (rate > THRESHOLD_PER_MIN) {
+      return { state: "firing", reason: `error rate ${rate.toFixed(1)}/min > ${THRESHOLD_PER_MIN}/min` };
+    }
+    return { state: "healthy" };
+  },
+};
+
+export default monitor;
+```
+
+You can read every monitor on the **Monitors** screen, with its schedule and latest state. Because monitors are plain code, a teammate can read exactly what each one checks and adjust a threshold without rebuilding it.
+
+<Note>
+The three states are distinct on purpose. `healthy` means the thing being watched is fine. `firing` means the condition tripped, and it always carries a short, specific reason. `unknown` means the check could not run — a failed query or missing data — so a broken monitor is surfaced rather than silently passing.
+</Note>
+
+## How a monitor goes live
+
+A monitor goes live when the agent **commits and pushes** it to your workspace's git repository. There is no separate publish button.
+
+```sh
+git add monitors/error-log-rate-5m.ts
+git commit -m "add monitor: error-log-rate-5m"
+git push
+```
+
+Within about 30 seconds of the push, OnePatch picks up the new file and begins evaluating it on its schedule. The same is true for an edit: change the file, push, and the new version takes over. Until the push, a monitor written in the workspace is not yet running — if you asked for a monitor and it is not appearing on the Monitors screen, the push is the step to check.
+
+## Arming a monitor
+
+By default a monitor records its state as telemetry and, if it fires, notifies Slack. Ask the agent to **arm** a monitor when a firing should trigger an automated response:
+
+```text
+Arm the error-rate monitor so it opens an incident and investigates when it fires.
+```
+
+An armed monitor that fires opens an incident and hands it to the agent to triage. [Incidents and Slack](/incidents-and-slack) covers what happens next.

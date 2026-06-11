@@ -1,0 +1,47 @@
+---
+title: How OnePatch works
+description: Telemetry in, an agent over your data, monitors and dashboards out.
+---
+
+OnePatch has three parts: the telemetry you send, the agent that reads it, and the artifacts the agent produces. This page explains the model so the rest of the documentation reads clearly.
+
+## Telemetry in
+
+Your application sends OpenTelemetry — traces, metrics, and logs — to your workspace's ingest endpoint. OnePatch stores every signal and makes it queryable. You do not configure storage, schemas, or retention; you point your exporter at the endpoint and the data lands.
+
+This is the only thing you have to set up by hand, and you do it once. See [Getting started](/getting-started) for the steps.
+
+## The agent over your data
+
+Your workspace runs an AI **agent** with read access to all of your telemetry and to the repositories you connect. You interact with it in chat. It is the single interface to the product — there is no separate query builder, alert editor, or dashboard designer.
+
+When you ask a question, the agent queries your telemetry directly and answers from the data. When you ask it to watch something or visualize something, it writes the monitor or dashboard for you.
+
+<Note>
+The agent answers from your actual telemetry, not from a fixed set of pre-built reports. If your service emits it, the agent can query it.
+</Note>
+
+## Monitors and dashboards out
+
+The agent produces two kinds of durable artifact:
+
+- A **dashboard** is a live view of your telemetry. The agent writes it, and it refreshes as new data arrives.
+- A **monitor** is a small program that checks a window of your telemetry on a schedule and reports whether it is `healthy`, `firing`, or `unknown`.
+
+Both are stored as code in your workspace and versioned in git, so every change is a commit you can read and revert. A monitor goes live when the agent commits and pushes it — there is no separate publish step. [Monitors and dashboards](/monitors-and-dashboards) covers this in detail.
+
+## What the agent does when something breaks
+
+A monitor can be **armed**. When an armed monitor fires, OnePatch opens an incident and the agent triages it — it investigates the firing, and either tunes the monitor if it was a false alarm or opens a pull request if it found a real problem. Notifications land in your `#onepatch-alerts` Slack channel. [Incidents and Slack](/incidents-and-slack) explains the full path.
+
+## Vocabulary
+
+These terms appear throughout the product and the docs:
+
+| Term | Meaning |
+| --- | --- |
+| Workspace | Your organization's private OnePatch instance. |
+| Server | The machine your workspace runs on, including the agent. |
+| Agent | The AI runtime inside your server that you talk to in chat. |
+| Online | The state of a workspace that is provisioned and ready. |
+| Telemetry flowing | Your workspace has received its first signal from your app. |
