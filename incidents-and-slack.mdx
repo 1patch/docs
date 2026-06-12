@@ -7,7 +7,7 @@ When a monitor detects a problem, OnePatch has two responses depending on whethe
 
 ## When an unarmed monitor fires
 
-Most monitors are unarmed, which is the right default. When an unarmed monitor fires, OnePatch records the firing — its state, its reason, and the time — as telemetry you can query and chart, and it posts a notification to your `#onepatch-alerts` Slack channel. No further action is taken automatically; you decide what to do.
+Most monitors are unarmed, which is the right default. When an unarmed monitor fires, OnePatch records the firing — its state, its reason, and the time — as telemetry you can query and chart. No further action is taken automatically: nothing is paged and no incident is opened. You decide what to do, and you can ask the agent to chart a monitor's firing history at any time.
 
 ## When an armed monitor fires
 
@@ -24,7 +24,7 @@ OnePatch opens one incident per firing episode, not one per evaluation. A monito
 
 ## Slack
 
-OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. Monitor notifications and incident summaries post there. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
+OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. When an armed monitor opens an incident, its notifications and the agent's incident summaries post there. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
 
 If you need to reconnect Slack or change the workspace, do it from the **Integrations** screen.
 

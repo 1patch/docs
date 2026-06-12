@@ -80,7 +80,7 @@ Within about 30 seconds of the push, OnePatch picks up the new file and begins e
 
 ## Arming a monitor
 
-By default a monitor records its state as telemetry and, if it fires, notifies Slack. Ask the agent to **arm** a monitor when a firing should trigger an automated response:
+By default a monitor only records its state as telemetry — every tick, including a firing, is queryable and chartable, but nothing is paged automatically. Ask the agent to **arm** a monitor when a firing should escalate: an armed monitor opens an incident and hands the firing to the agent, and notifications land in your `#onepatch-alerts` Slack channel.
 
 ```text
 Arm the error-rate monitor so it opens an incident and investigates when it fires.
