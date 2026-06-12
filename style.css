@@ -109,9 +109,14 @@ code, pre, kbd, samp {
 .code-block button {
   backdrop-filter: none !important;
   background-color: #efece3 !important;
+  border: 1px solid var(--op-rule) !important;
 }
 .dark .code-block button {
   background-color: #15161a !important;
+}
+/* Icon in ink-soft so it reads against the panel, not the framework's faint gray. */
+.code-block button svg {
+  color: var(--op-ink-soft) !important;
 }
 .code-block button:hover {
   background-color: #e7e3d9 !important;
