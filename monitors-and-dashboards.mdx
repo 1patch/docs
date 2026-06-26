@@ -24,13 +24,17 @@ Drop the CPU panel and add a table of the 20 slowest requests this hour.
 
 ## Monitors
 
-A monitor watches a window of your telemetry on a schedule and reports one of three states: `healthy`, `firing`, or `unknown`. You ask for one the same way:
+A monitor is a small program that watches a window of your telemetry on a schedule and returns one of three states: `healthy`, `firing`, or `unknown`. Because it's code, a monitor isn't limited to a single query: in one evaluation it can read traces, metrics, and logs, check your repo's latest commit, remember what it saw last tick, and decide.
+
+Each monitor runs with a context that reaches well beyond a single metric: your full telemetry over ClickHouse (traces, metrics, and logs in one SQL surface), your connected GitHub repo (its latest commit, and how stale any file is), its own memory from prior ticks — and new sources as the need arises. That's enough to ask questions a threshold can't, like "did errors climb after the deploy that landed four minutes ago?"
+
+You ask for one in plain language:
 
 ```text
 Alert me if the error rate over the last 5 minutes goes above 10 per minute.
 ```
 
-The agent writes the monitor as a small TypeScript program in your workspace under `monitors/`. A monitor the agent produces for that request looks like this:
+The agent writes the monitor as a small program in your workspace under `monitors/`. A monitor the agent produces for that request looks like this:
 
 ```ts
 import type { Monitor } from "@1patch/monitor-api";
@@ -43,11 +47,11 @@ const monitor: Monitor = {
   cron: "*/30 * * * * *", // evaluate every 30 seconds
   description: "Fires when the error-log rate over the last 5 minutes exceeds 10/min.",
   async evaluate(ctx) {
-    const rows = await ctx.queryDuckDB(`
-      SELECT COUNT(*) AS n
+    const rows = await ctx.queryOtel(`
+      SELECT count() AS n
       FROM otel.logs
       WHERE severity_text = 'ERROR'
-        AND ts >= now() - INTERVAL '${WINDOW_MIN}' MINUTE
+        AND ts >= now() - INTERVAL ${WINDOW_MIN} MINUTE
     `);
     const rate = Number(rows[0]?.n ?? 0) / WINDOW_MIN;
     if (rate > THRESHOLD_PER_MIN) {
@@ -80,10 +84,12 @@ Within about 30 seconds of the push, OnePatch picks up the new file and begins e
 
 ## Arming a monitor
 
-By default a monitor only records its state as telemetry — every tick, including a firing, is queryable and chartable, but nothing is paged automatically. Ask the agent to **arm** a monitor when a firing should escalate: an armed monitor opens an incident and hands the firing to the agent, and notifications land in your `#onepatch-alerts` Slack channel.
+A monitor can post to Slack whenever it fires. On its own, that is the extent of what it does: it records its state and, if you want, pings your channel. Arming it goes further. An armed monitor turns a firing into an incident and hands it to an agent, which investigates against live telemetry to find the cause. If the alert is a false alarm, the agent tunes the monitor itself. If it is real, it proposes a patch — a pull request that fixes the underlying issue. The agent runs the investigation and drafts the fix; your team reviews, iterates, and approves what ships.
+
+You arm a monitor by asking:
 
 ```text
 Arm the error-rate monitor so it opens an incident and investigates when it fires.
 ```
 
-An armed monitor that fires opens an incident and hands it to the agent to triage. [Incidents and Slack](/incidents-and-slack) covers what happens next.
+[Incidents and Slack](/incidents-and-slack) covers what happens after a firing becomes an incident.
