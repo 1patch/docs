@@ -24,9 +24,15 @@ OnePatch opens one incident per firing episode, not one per evaluation. A monito
 
 ## Slack
 
-OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. When an armed monitor opens an incident, its notifications and the agent's incident summaries post there. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
+OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. When an armed monitor opens an incident, the alert posts there: which monitor fired, why, and a link straight into the incident chat, so you can follow the agent's investigation from the message itself. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
 
-If you need to reconnect Slack or change the workspace, do it from the **Integrations** screen.
+You can pick a different channel name, reconnect Slack, or change the workspace from the **Integrations** screen.
+
+## Talking to the agent from Slack
+
+Slack is also a way to talk to the agent, not only where alerts land. Send the OnePatch bot a direct message and it answers the same way the chat in the app does. You can also @-mention the bot in any channel it has been invited to, and it replies in a thread — each thread is its own conversation.
+
+These conversations are real chats in your workspace. They appear in the app's sidebar with a Slack marker and the sender's name, so a question asked in Slack — and the agent's answer — stays visible to the rest of your team.
 
 ## Reading firing history
 
