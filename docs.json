@@ -37,7 +37,8 @@
             "group": "Guides",
             "pages": [
               "monitors-and-dashboards",
-              "incidents-and-slack"
+              "incidents-and-slack",
+              "mcp"
             ]
           }
         ]

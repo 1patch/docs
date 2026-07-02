@@ -34,7 +34,7 @@ You ask for one in plain language:
 Alert me if the error rate over the last 5 minutes goes above 10 per minute.
 ```
 
-The agent writes the monitor as a small program in your workspace under `monitors/`. A monitor the agent produces for that request looks like this:
+The agent writes the monitor as a small program in your workspace. A monitor the agent produces for that request looks like this:
 
 ```ts
 import type { Monitor } from "@1patch/monitor-api";
@@ -72,15 +72,7 @@ The three states are distinct on purpose. `healthy` means the thing being watche
 
 ## How a monitor goes live
 
-A monitor goes live when the agent **commits and pushes** it to your workspace's git repository. There is no separate publish button.
-
-```sh
-git add monitors/error-log-rate-5m.ts
-git commit -m "add monitor: error-log-rate-5m"
-git push
-```
-
-Within about 30 seconds of the push, OnePatch picks up the new file and begins evaluating it on its schedule. The same is true for an edit: change the file, push, and the new version takes over. Until the push, a monitor written in the workspace is not yet running — if you asked for a monitor and it is not appearing on the Monitors screen, the push is the step to check.
+A monitor goes live when the agent **commits** it to your workspace — there is no separate publish step. Within about half a minute it appears on the **Monitors** screen and begins evaluating on its schedule. Edits work the same way: the agent commits the change and the new version takes over.
 
 ## Arming a monitor
 
