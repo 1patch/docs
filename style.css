@@ -199,10 +199,26 @@ img.nav-logo {
 }
 
 .op-footer-brand .logo-mark img {
-  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+/* Show exactly one mark per theme. The injected imgs can't lean on Tailwind's
+ * `dark:` utilities (see footer-brand.js), so the swap lives here on the `.dark`
+ * selector this file already uses. Without this, our `.logo-mark img` rule
+ * outspecifies `hidden` and both marks render side by side (the doubled logo). */
+.op-footer-brand .op-logo--light {
+  display: block;
+}
+.op-footer-brand .op-logo--dark {
+  display: none;
+}
+.dark .op-footer-brand .op-logo--light {
+  display: none;
+}
+.dark .op-footer-brand .op-logo--dark {
+  display: block;
 }
 
 .op-footer-year {
