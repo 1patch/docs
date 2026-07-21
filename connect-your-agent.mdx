@@ -1,0 +1,88 @@
+---
+title: Connect OnePatch to your agent
+sidebarTitle: MCP
+description: Install the OnePatch MCP server into your coding agent — your live telemetry and everything OnePatch has learned, open to every tool in your kit.
+---
+
+Your OnePatch workspace exposes an **MCP server**. Add it to whatever coding agent you already use — Claude Code, Cursor, VS Code, and the rest — and that agent can read your live telemetry and everything the OnePatch agent has found, right where you write code.
+
+OnePatch speaks MCP in both directions, and it holds nothing hostage: the intelligence OnePatch builds about your systems is meant to travel to the tools you already trust, not to live only inside our app.
+
+## What your agent gains
+
+Once connected, your coding agent can, without you leaving your editor:
+
+- **Answer questions from live production data** — "did errors move after my last deploy?", "what's p95 on the checkout route right now?" — by querying your real telemetry, not a canned report.
+- **Read what OnePatch found during an incident** — the agent's actual investigation and reasoning, not just the alert that fired.
+- **Pull any chat in your workspace in as context** — so a fix you're writing can build on a conversation the OnePatch agent already had.
+
+Everything it returns is read-only and scoped to your organization.
+
+## Install
+
+The server lives at `https://app.onepatch.dev/mcp` and speaks HTTP. Pick your agent:
+
+<CodeGroup>
+
+```sh Claude Code
+claude mcp add --transport http onepatch https://app.onepatch.dev/mcp
+```
+
+```json Cursor
+{
+  "mcpServers": {
+    "onepatch": {
+      "url": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```json VS Code
+{
+  "servers": {
+    "onepatch": {
+      "type": "http",
+      "url": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```json Windsurf
+{
+  "mcpServers": {
+    "onepatch": {
+      "serverUrl": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```text Any MCP client
+Transport:  HTTP (streamable)
+URL:        https://app.onepatch.dev/mcp
+Auth:       OAuth — sign in with your OnePatch account
+```
+
+</CodeGroup>
+
+For the editors that use a config file, drop the snippet in `.cursor/mcp.json` (Cursor), `.vscode/mcp.json` (VS Code), or `~/.codeium/windsurf/mcp_config.json` (Windsurf), then reload the window.
+
+<Note>
+The first time your agent calls the server, it opens an OAuth sign-in. Sign in with your OnePatch account and everything the server returns is scoped to your organization.
+</Note>
+
+## You're not locked in
+
+It's the same open server any MCP client can speak to — no OnePatch-only API in front of it. What OnePatch learns from your telemetry and incidents travels to whatever agent you use, today or next year. We'd rather be one good tool in your kit than a silo you log into to get value out of your own data.
+
+And it runs both ways: on the **Integrations** screen you can connect your own MCP servers, and the OnePatch agent gains their tools in every chat.
+
+## The tools the server exposes
+
+| Tool | What it does |
+| --- | --- |
+| `query_otel` | Run a read-only SQL query against your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
+| `list_chats` | List the chats in your workspace. |
+| `read_chat` | Read one chat's full transcript. |
