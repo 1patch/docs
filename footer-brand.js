@@ -21,9 +21,21 @@
     wrap.insertBefore(brand, wrap.firstChild);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", addFooterBrand);
-  } else {
+  function init() {
     addFooterBrand();
+    // Mintlify is a client-routed SPA: it re-renders the footer (dropping our
+    // brand row) on every in-app navigation, so the observer must stay live and
+    // re-place it — not run only once at load. addFooterBrand is idempotent, so
+    // re-runs on unrelated mutations are cheap no-ops.
+    new MutationObserver(addFooterBrand).observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 })();
