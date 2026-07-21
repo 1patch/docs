@@ -185,18 +185,18 @@ img.nav-logo {
 
 /* Full logo lockup in the top-left nav. Mintlify's `logo` renders only the
  * mark; nav-brand.js appends the "onepatch" wordmark to its right so the header
- * reads as the whole logo. Type + spacing mirror the marketing/blog header
- * (Monaspace Neon, 500, -0.01em, 26px mark → 10px gap → wordmark). */
+ * reads as the whole logo. Type + spacing match the app's brand wordmark
+ * exactly (client OnboardingFlow.tsx `Logomark`): the display face Monaspace
+ * Xenon, bold, sized 0.6× the 26px mark, 10px gap. */
 .op-nav-lockup {
   display: inline-flex !important;
   align-items: center;
 }
 .op-nav-word {
   margin-left: 10px;
-  font-family: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-weight: 500;
-  font-size: 18px;
-  letter-spacing: -0.01em;
+  font-family: "Monaspace Xenon", "Monaspace Neon", ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 15.6px;
   line-height: 1;
   color: var(--op-ink);
 }
