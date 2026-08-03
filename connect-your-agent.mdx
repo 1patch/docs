@@ -97,7 +97,7 @@ curl -s -X POST https://app.onepatch.dev/mcp \
 
 Any MCP client that can send a static `Authorization` header works the same way — mint a token and pass `Authorization: Bearer <token>` instead of going through the OAuth sign-in.
 
-Each key is bound to one organization: every token minted from it carries that org and can never read another customer's data. **Rotate** issues a new secret while the old one keeps working, so you can roll credentials with no downtime. **Revoke** deletes the key and every secret on it — use it to decommission a key, not to finish a rotation.
+Each key is bound to one organization: every token minted from it carries that org and can never read another customer's data. **Rotate** issues a new secret while the old one keeps working, so you can roll credentials with no downtime. Once your service is running on the new secret, **Retire old secret** (shown on the key whenever more than one secret is active) deletes everything but the newest, completing the rotation — the old credential stops minting tokens immediately. **Revoke** deletes the key and every secret on it — use it to decommission a key, not to finish a rotation.
 
 ## You're not locked in
 
