@@ -1,26 +1,12 @@
 ---
 title: Connect OnePatch to your agent
 sidebarTitle: MCP
-description: Install the OnePatch MCP server into your coding agent — your live telemetry and everything OnePatch has learned, open to every tool in your kit.
+description: Add the OnePatch MCP server to your coding agent to query telemetry and read incident investigations from your editor.
 ---
 
-Your OnePatch workspace exposes an **MCP server**. Add it to whatever coding agent you already use — Claude Code, Cursor, VS Code, and the rest — and that agent can read your live telemetry and everything the OnePatch agent has found, right where you write code.
-
-OnePatch speaks MCP in both directions, and it holds nothing hostage: the intelligence OnePatch builds about your systems is meant to travel to the tools you already trust, not to live only inside our app.
-
-## What your agent gains
-
-Once connected, your coding agent can, without you leaving your editor:
-
-- **Answer questions from live production data** — "did errors move after my last deploy?", "what's p95 on the checkout route right now?" — by querying your real telemetry, not a canned report.
-- **Read what OnePatch found during an incident** — the agent's actual investigation and reasoning, not just the alert that fired.
-- **Pull any chat in your workspace in as context** — so a fix you're writing can build on a conversation the OnePatch agent already had.
-
-Everything is scoped to your organization, and the only write your agent gets is replying into your own chats.
+Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`. Connect it to your coding agent to query your telemetry with SQL, read the OnePatch agent's incident investigations, and read or reply to workspace chats. Everything is scoped to your organization; the only write is replying into your own chats.
 
 ## Install
-
-The server lives at `https://app.onepatch.dev/mcp` and speaks HTTP. Pick your agent:
 
 <CodeGroup>
 
@@ -67,17 +53,13 @@ Auth:       OAuth — sign in with your OnePatch account
 
 </CodeGroup>
 
-For the editors that use a config file, drop the snippet in `.cursor/mcp.json` (Cursor), `.vscode/mcp.json` (VS Code), or `~/.codeium/windsurf/mcp_config.json` (Windsurf), then reload the window.
+Config files: `.cursor/mcp.json` (Cursor), `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing.
 
-<Note>
-The first time your agent calls the server, it opens an OAuth sign-in. Sign in with your OnePatch account and everything the server returns is scoped to your organization.
-</Note>
+The first call opens an OAuth sign-in with your OnePatch account.
 
 ## Headless access (API keys)
 
-The OAuth flow above opens a browser sign-in — fine at your desk, useless for a service. For a script, CI job, or your own agent running unattended, use an **API key** instead.
-
-An org admin can create one on the **Integrations** page in the OnePatch app, under **API keys**. You get a `client_id` / `client_secret` pair; the secret is shown exactly once, so store it when it appears. The pair never expires — your code exchanges it for a 1-hour access token whenever it needs one and sends that token as the MCP bearer, so a long-running service never needs a human:
+OAuth needs a browser. For a script, CI job, or unattended agent, use an API key: an org admin creates one on the **Integrations** page under **API keys**. You get a `client_id` / `client_secret` pair — the secret is shown once. The pair doesn't expire; your code exchanges it for a 1-hour access token and sends that as the MCP bearer:
 
 ```sh
 # 1. Exchange your key for a 1-hour access token
@@ -95,21 +77,17 @@ curl -s -X POST https://app.onepatch.dev/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
-Any MCP client that can send a static `Authorization` header works the same way — mint a token and pass `Authorization: Bearer <token>` instead of going through the OAuth sign-in.
+Any MCP client that can send a static `Authorization` header works the same way.
 
-Each key is bound to one organization: every token minted from it carries that org and can never read another customer's data. **Rotate** issues a new secret while the old one keeps working, so you can roll credentials with no downtime. Once the new secret is deployed, **Retire old secret** deletes the old one — that finishes the rotation. **Revoke** deletes the key and every secret on it — use it to decommission a key, not to finish a rotation.
+Each key is bound to one organization; its tokens can't read another customer's data. **Rotate** issues a new secret while the old one keeps working. Once the new secret is deployed, **Retire old secret** deletes the old one. **Revoke** deletes the key and every secret on it.
 
-## You're not locked in
-
-It's the same open server any MCP client can speak to — no OnePatch-only API in front of it. What OnePatch learns from your telemetry and incidents travels to whatever agent you use, today or next year. We'd rather be one good tool in your kit than a silo you log into to get value out of your own data.
-
-And it runs both ways: on the **Integrations** screen you can connect your own MCP servers, and the OnePatch agent gains their tools in every chat.
-
-## The tools the server exposes
+## Tools
 
 | Tool | What it does |
 | --- | --- |
-| `query_otel` | Run a read-only SQL query against your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
+| `query_otel` | Read-only SQL over your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
 | `list_chats` | List the chats in your workspace. |
 | `read_chat` | Read one chat's full transcript. |
-| `send_chat_reply` | Post a reply into one of your chats — the OnePatch agent sees it as a message from you (or from your API client, on a key). |
+| `send_chat_reply` | Post a reply into one of your chats. |
+
+The connection also runs the other way: on the **Integrations** page you can add your own MCP servers, and the OnePatch agent gets their tools in every chat.
