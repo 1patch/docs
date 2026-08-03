@@ -16,7 +16,7 @@ Once connected, your coding agent can, without you leaving your editor:
 - **Read what OnePatch found during an incident** — the agent's actual investigation and reasoning, not just the alert that fired.
 - **Pull any chat in your workspace in as context** — so a fix you're writing can build on a conversation the OnePatch agent already had.
 
-Everything it returns is read-only and scoped to your organization.
+Everything is scoped to your organization, and the only write your agent gets is replying into your own chats.
 
 ## Install
 
@@ -73,6 +73,32 @@ For the editors that use a config file, drop the snippet in `.cursor/mcp.json` (
 The first time your agent calls the server, it opens an OAuth sign-in. Sign in with your OnePatch account and everything the server returns is scoped to your organization.
 </Note>
 
+## Headless access (API keys)
+
+The OAuth flow above opens a browser sign-in — fine at your desk, useless for a service. For a script, CI job, or your own agent running unattended, use an **API key** instead.
+
+An org admin can create one on the **Integrations** page in the OnePatch app, under **API keys**. You get a `client_id` / `client_secret` pair; the secret is shown exactly once, so store it when it appears. The pair never expires — your code exchanges it for a 1-hour access token whenever it needs one and sends that token as the MCP bearer, so a long-running service never needs a human:
+
+```sh
+# 1. Exchange your key for a 1-hour access token
+TOKEN=$(curl -s -X POST https://auth.onepatch.dev/oauth2/token \
+  -d grant_type=client_credentials \
+  -d client_id=$ONEPATCH_CLIENT_ID \
+  --data-urlencode "client_secret=$ONEPATCH_CLIENT_SECRET" \
+  | jq -r .access_token)
+
+# 2. Call the MCP endpoint with it
+curl -s -X POST https://app.onepatch.dev/mcp \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+Any MCP client that can send a static `Authorization` header works the same way — mint a token and pass `Authorization: Bearer <token>` instead of going through the OAuth sign-in.
+
+Each key is bound to one organization: every token minted from it carries that org and can never read another customer's data. **Rotate** issues a new secret while the old one keeps working, so you can roll credentials with no downtime — deploy the new secret, then revoke. **Revoke** kills the key outright.
+
 ## You're not locked in
 
 It's the same open server any MCP client can speak to — no OnePatch-only API in front of it. What OnePatch learns from your telemetry and incidents travels to whatever agent you use, today or next year. We'd rather be one good tool in your kit than a silo you log into to get value out of your own data.
@@ -86,3 +112,4 @@ And it runs both ways: on the **Integrations** screen you can connect your own M
 | `query_otel` | Run a read-only SQL query against your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
 | `list_chats` | List the chats in your workspace. |
 | `read_chat` | Read one chat's full transcript. |
+| `send_chat_reply` | Post a reply into one of your chats — the OnePatch agent sees it as a message from you (or from your API client, on a key). |
