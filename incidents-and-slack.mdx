@@ -3,43 +3,37 @@ title: Incidents and Slack
 description: What happens when a monitor fires.
 ---
 
-When a monitor detects a problem, OnePatch has two responses depending on whether the monitor is armed. This page describes both, and where the notifications land.
+What happens when a monitor fires depends on whether it is armed.
 
-## When an unarmed monitor fires
+## Unarmed monitors
 
-Most monitors are unarmed, which is the right default. When an unarmed monitor fires, OnePatch records the firing — its state, its reason, and the time — as telemetry you can query and chart. No further action is taken automatically: nothing is paged and no incident is opened. You decide what to do, and you can ask the agent to chart a monitor's firing history at any time.
+When an unarmed monitor fires, OnePatch records the firing — its state, reason, and time — as telemetry you can query and chart. No one is paged and no incident is opened.
 
-## When an armed monitor fires
+## Armed monitors
 
-An **armed** monitor escalates. When it fires, OnePatch opens an **incident** and hands it to the agent to triage. The agent:
+When an armed monitor fires, OnePatch opens an **incident** and the agent triages it:
 
-1. Investigates the firing against your live telemetry to understand what happened.
-2. Either tunes the monitor, if the firing was a false alarm, or opens a pull request against your repository, if it found a real problem.
+1. It investigates the firing against your live telemetry.
+2. It tunes the monitor if the firing was a false alarm, or opens a pull request against your repository if the problem is real.
 
-You see the incident and follow the agent's work, and you review any pull request before it merges. Arming is opt-in per monitor — ask the agent to arm a monitor only when a firing genuinely warrants an automated response.
+An incident is itself a chat: you can watch the investigation as it happens, step in, and review any pull request before it merges. Arming is opt-in per monitor; arm one only when a firing warrants an automated response.
 
 <Note>
-OnePatch opens one incident per firing episode, not one per evaluation. A monitor on a fast schedule that stays firing produces a single incident, and it cools down after the incident resolves, so you are not paged repeatedly for the same event.
+A firing episode opens a single incident, however many evaluations fire during it, with a cooldown after it resolves.
 </Note>
 
 ## Slack
 
-OnePatch creates an `#onepatch-alerts` channel in the Slack workspace you connect during setup. When an armed monitor opens an incident, the alert posts there: which monitor fired, why, and a link straight into the incident chat, so you can follow the agent's investigation from the message itself. Connect the Slack workspace your team actually watches, since this is the channel that carries alerts.
-
-You can pick a different channel name, reconnect Slack, or change the workspace from the **Integrations** screen.
+Incident alerts post to the `#onepatch-alerts` channel OnePatch creates in your connected Slack workspace: which monitor fired, why, and a link into the incident chat. The channel name, workspace, and connection are managed from the integrations screen.
 
 ## Talking to the agent from Slack
 
-Slack is also a way to talk to the agent, not only where alerts land. Send the OnePatch bot a direct message and it answers the same way the chat in the app does. You can also @-mention the bot in any channel it has been invited to, and it replies in a thread — each thread is its own conversation.
+Send the OnePatch bot a direct message and it answers the same way the in-app chat does. @-mention it in a channel it has been invited to and it replies in a thread; each thread is its own conversation. These conversations appear in the app's sidebar with a Slack marker and the sender's name, so they stay visible to the rest of your team.
 
-These conversations are real chats in your workspace. They appear in the app's sidebar with a Slack marker and the sender's name, so a question asked in Slack — and the agent's answer — stays visible to the rest of your team.
+## Firing history
 
-## Reading firing history
-
-Because every firing is recorded as telemetry, you can ask the agent to chart it. For example:
+Every firing is recorded as telemetry, so you can chart it:
 
 ```text
 Show me how often the error-rate monitor fired over the last week.
 ```
-
-The agent builds a dashboard from the monitor's own history, the same way it builds one from your application's telemetry.

@@ -1,9 +1,9 @@
 ---
 title: Monitors and dashboards
-description: How the agent authors them, and how they go live.
+description: What the agent builds, and how it goes live.
 ---
 
-Monitors and dashboards are the two things the agent builds for you. You do not write either by hand — you describe what you want in chat, and the agent writes the code. This page explains what each one is and how it goes live, so the agent's output is legible to you.
+Monitors and dashboards are the two artifacts the agent builds. You describe what you want in chat; the agent builds it.
 
 ## Dashboards
 
@@ -14,9 +14,9 @@ Build a dashboard showing request rate, p95 latency by route,
 and error count over the last 24 hours.
 ```
 
-The agent queries your telemetry to confirm the data exists, then writes a `Dashboard.tsx` file in your workspace. It appears in the side pane next to the chat and reloads as you refine it. Each panel refreshes on its own as new telemetry lands, so an open dashboard stays current without a manual refresh.
+The agent queries your telemetry to confirm the data exists, then builds the dashboard. It appears in the side pane next to the chat and refreshes on its own. Saved dashboards are listed on the **Dashboards** screen.
 
-To change a dashboard, ask. The agent edits the existing file rather than starting over:
+To change one, ask — the agent edits it in place:
 
 ```text
 Drop the CPU panel and add a table of the 20 slowest requests this hour.
@@ -24,9 +24,7 @@ Drop the CPU panel and add a table of the 20 slowest requests this hour.
 
 ## Monitors
 
-A monitor is a small program that watches a window of your telemetry on a schedule and returns one of three states: `healthy`, `firing`, or `unknown`. Because it's code, a monitor isn't limited to a single query: in one evaluation it can read traces, metrics, and logs, check your repo's latest commit, remember what it saw last tick, and decide.
-
-Each monitor runs with a context that reaches well beyond a single metric: your full telemetry over ClickHouse (traces, metrics, and logs in one SQL surface), your connected GitHub repo (its latest commit, and how stale any file is), its own memory from prior ticks — and new sources as the need arises. That's enough to ask questions a threshold can't, like "did errors climb after the deploy that landed four minutes ago?"
+A monitor watches your telemetry and reports one of three states: `healthy`, `firing`, or `unknown`. It is more than a threshold: in one check it can look across your traces, metrics, and logs, read your connected repository, and remember what it saw last time — enough to notice, for example, that errors climbed right after the latest deploy.
 
 You ask for one in plain language:
 
@@ -34,54 +32,28 @@ You ask for one in plain language:
 Alert me if the error rate over the last 5 minutes goes above 10 per minute.
 ```
 
-The agent writes the monitor as a small program in your workspace. A monitor the agent produces for that request looks like this:
+The **Monitors** screen lists every monitor with its schedule, current state, description, and — when firing — the reason. To change a monitor's threshold, schedule, or logic, ask the agent.
 
-```ts
-import type { Monitor } from "@1patch/monitor-api";
+The three states:
 
-const THRESHOLD_PER_MIN = 10;
-const WINDOW_MIN = 5;
+- `healthy` — the condition being watched is fine.
+- `firing` — the condition tripped. A firing always carries a short, specific reason.
+- `unknown` — the check could not run (failed query, missing data).
 
-const monitor: Monitor = {
-  id: "error-log-rate-5m",
-  cron: "*/30 * * * * *", // evaluate every 30 seconds
-  description: "Fires when the error-log rate over the last 5 minutes exceeds 10/min.",
-  async evaluate(ctx) {
-    const rows = await ctx.queryOtel(`
-      SELECT count() AS n
-      FROM otel.logs
-      WHERE severity_text = 'ERROR'
-        AND ts >= now() - INTERVAL ${WINDOW_MIN} MINUTE
-    `);
-    const rate = Number(rows[0]?.n ?? 0) / WINDOW_MIN;
-    if (rate > THRESHOLD_PER_MIN) {
-      return { state: "firing", reason: `error rate ${rate.toFixed(1)}/min > ${THRESHOLD_PER_MIN}/min` };
-    }
-    return { state: "healthy" };
-  },
-};
+The screen also shows `pending` for a new monitor that has not checked yet, and `failed` for one that could not start — ask the agent to fix it.
 
-export default monitor;
-```
+## Going live
 
-You can read every monitor on the **Monitors** screen, with its schedule and latest state. Because monitors are plain code, a teammate can read exactly what each one checks and adjust a threshold without rebuilding it.
-
-<Note>
-The three states are distinct on purpose. `healthy` means the thing being watched is fine. `firing` means the condition tripped, and it always carries a short, specific reason. `unknown` means the check could not run — a failed query or missing data — so a broken monitor is surfaced rather than silently passing.
-</Note>
-
-## How a monitor goes live
-
-A monitor goes live when the agent **commits** it to your workspace — there is no separate publish step. Within about half a minute it appears on the **Monitors** screen and begins evaluating on its schedule. Edits work the same way: the agent commits the change and the new version takes over.
+A monitor is live as soon as the agent finishes writing it: it appears on the **Monitors** screen and starts checking. Edits take effect the same way.
 
 ## Arming a monitor
 
-A monitor can post to Slack whenever it fires. On its own, that is the extent of what it does: it records its state and, if you want, pings your channel. Arming it goes further. An armed monitor turns a firing into an incident and hands it to an agent, which investigates against live telemetry to find the cause. If the alert is a false alarm, the agent tunes the monitor itself. If it is real, it proposes a patch — a pull request that fixes the underlying issue. The agent runs the investigation and drafts the fix; your team reviews, iterates, and approves what ships.
+An unarmed firing is only recorded. An **armed** monitor escalates: a firing opens an incident, and the agent investigates it against live telemetry. If the alert is a false alarm, the agent tunes the monitor; if it is real, it opens a pull request with a proposed fix. Your team reviews and approves what ships.
 
 You arm a monitor by asking:
 
 ```text
-Arm the error-rate monitor so it opens an incident and investigates when it fires.
+Arm the error-rate monitor.
 ```
 
 [Incidents and Slack](/incidents-and-slack) covers what happens after a firing becomes an incident.
