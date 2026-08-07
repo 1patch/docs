@@ -40,7 +40,7 @@ An org admin connects on the **Integrations** page under **AWS account**. The ca
 
 Credentials are short-lived STS sessions, one hour at most, requested on demand while the agent works. Nothing long-lived is stored on either side.
 
-Each chat gets its own session, named `onepatch-<chat id>`. Every API call appears in your CloudTrail under that name, so you can trace any action back to the conversation that made it.
+Every API call appears in your CloudTrail under a session named for the chat that made it, so you can trace any action back to the conversation.
 
 ## Disconnect
 
