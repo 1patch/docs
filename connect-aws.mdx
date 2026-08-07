@@ -29,7 +29,7 @@ An org admin connects on the **Integrations** page under **AWS account**. The ca
     ```
   </Step>
   <Step title="Attach permissions">
-    Attach the permissions you want the agent to have. `ReadOnlyAccess` is a reasonable start. The role's policies are the whole permission boundary — OnePatch adds nothing of its own, and you can widen or narrow them at any time without touching OnePatch.
+    Attach the permissions you want the agent to have. `ReadOnlyAccess` is a reasonable start. The agent can do exactly what the role's policies allow, and you can widen or narrow them at any time without touching OnePatch.
   </Step>
   <Step title="Paste the role ARN">
     Paste the role's ARN into the card and click **Connect**. OnePatch verifies by assuming the role from your workspace, and the card flips to **Connected** within a few seconds. If it stays on **Verifying…**, it shows the error from the last attempt — usually a trust policy that doesn't match yet.
