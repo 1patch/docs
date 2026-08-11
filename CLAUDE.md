@@ -16,5 +16,6 @@ One `<Update>` per week, 1–3 items. An item is one sentence, two if it earns i
 8. Don't pad to three items. One real change beats three filler ones.
 9. Link to the guide instead of explaining it twice.
 10. Removals and breakage get an entry in the same plain voice as features.
+11. Never write about the changelog itself — how it's made, how complete it is, what's coming to it. Customers came for the product.
 
 Read it aloud. If it sounds like a press release, rewrite it.
