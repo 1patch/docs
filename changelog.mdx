@@ -3,30 +3,118 @@ title: Changelog
 description: What's new in OnePatch.
 ---
 
-What's new in OnePatch. We post notable changes here as they ship.
+Everything through August 2026 is backfilled from our commit history a week at a time, so it is rougher than what follows.
 
-<Update label="August 7, 2026" tags={["Agent"]}>
-  ## The agent can act in your AWS account
+<Update label="Week of August 10, 2026" tags={["App"]}>
+  **Home is a review queue.** Signing in now lands on `/`, which lists the pull requests the agent has opened and is waiting on you to review.
 
-  Connect an IAM role from the Integrations page and the agent can describe resources, read logs, and take whatever actions the role's policies allow while it investigates. Permissions stay entirely on your side, and every action lands in your CloudTrail named for the chat that made it. Connecting takes seconds. See [AWS](/connect-aws).
+  **Phone and tablet.** The whole app — chat, dashboards, monitors — lays out for small screens.
+
+  **Episodes.** Related incidents fold into a single episode and draw as one object instead of a row of separate chats.
 </Update>
 
-<Update label="June 30, 2026" tags={["Agent"]}>
-  ## OnePatch speaks MCP, both ways
+<Update label="Week of August 3, 2026" tags={["Agent"]}>
+  **The agent can act in your AWS account.** Connect an IAM role from the Integrations page and the agent can describe resources, read logs, and take whatever actions the role's policies allow while it investigates. Permissions stay entirely on your side, and every action lands in your CloudTrail named for the chat that made it. See [AWS](/connect-aws).
 
-  Your workspace now exposes an MCP server your coding agent can connect to — query your live telemetry and read your chats from Claude Code, Cursor, or any MCP client. And the OnePatch agent can now use tools you bring: connect any OAuth-protected MCP server from the Integrations screen. See [MCP](/connect-your-agent).
+  **Email-inbox monitors.** Every workspace gets an ingest address. Forward alert email from any vendor and it becomes telemetry a monitor can act on.
+
+  **The agent remembers, and says less.** One workspace-wide memory that persists across chats, plus a shorter reporting voice — the result first, not the build log.
 </Update>
 
-<Update label="June 22, 2026" tags={["Slack"]}>
-  ## Talk to the agent from Slack
+<Update label="Week of July 27, 2026" tags={["API"]}>
+  **API keys.** Mint machine credentials for the MCP endpoint from the app, and rotate them without downtime.
 
-  DM the OnePatch bot, or @-mention it in a channel and it replies in a thread. Each conversation is a real chat that also shows up in the app, with the sender's name. Incident alerts now link straight to the incident chat, and you can rename the default alerts channel. See [Incidents and Slack](/incidents-and-slack).
+  **Monitor recovery is a signal, not a verdict.** A check going green re-opens the question instead of silently closing the incident.
 </Update>
 
-<Update label="June 10, 2026" tags={["Docs"]}>
-  ## Documentation and public changelog
+<Update label="Week of July 20, 2026" tags={["Telemetry"]}>
+  **Queries got cheaper.** Dashboard and agent queries are now bounded, cached, and snap-aligned, so one heavy board can't starve everything else in the workspace.
 
-  OnePatch now has public documentation at [docs.onepatch.dev](https://docs.onepatch.dev), including a one-stop [getting-started guide](/getting-started) and reference for monitors, dashboards, and incidents. This changelog is where we will post notable changes from here on.
+  **Histograms.** OTLP histograms are exposed as a typed view the agent can query directly.
 
-  The docs are written to be read by an AI agent as well as a person — the full text is available at [docs.onepatch.dev/llms-full.txt](https://docs.onepatch.dev/llms-full.txt).
+  **Signing out revokes the session** server-side, not just in your browser.
+</Update>
+
+<Update label="Week of July 13, 2026" tags={["App"]}>
+  **Accessibility.** Keyboard navigation and screen-reader semantics across chat, dashboards, monitors, the command palette, and onboarding.
+
+  **Chart share links.** Any single chart on a dashboard now has its own URL.
+
+  **Incidents got harder to lose.** Hand-off retries until acknowledged, resolution waits for observed-green, and a dead-man alarm fires if monitor evaluation itself stops.
+</Update>
+
+<Update label="Week of July 6, 2026" tags={["App"]}>
+  **Incident status moved into the chat** as a pinned tab beside the transcript, rather than sitting in the sidebar.
+
+  **Workspace switcher** is keyboard-navigable and shows real org logos.
+
+  **Quieter transcripts.** The agent's internal bookkeeping notes no longer render as messages.
+</Update>
+
+<Update label="Week of June 29, 2026" tags={["Agent"]}>
+  **OnePatch speaks MCP, both ways.** Your workspace exposes an MCP server your coding agent can connect to — query live telemetry and read your chats from Claude Code, Cursor, or any MCP client. And the OnePatch agent can use tools you bring: connect any OAuth-protected MCP server from the Integrations screen. See [MCP](/connect-your-agent).
+
+  **Incident status cards.** Incident chats get a status-page-style card, and the matching Slack card updates live as the incident moves through its phases.
+
+  **Switching workspaces no longer signs you out.** There is a full-page switcher for every org you belong to.
+</Update>
+
+<Update label="Week of June 22, 2026" tags={["Slack"]}>
+  **Talk to the agent from Slack.** DM the OnePatch bot, or @-mention it in a channel and it replies in a thread. Each conversation is a real chat that also shows up in the app, with the sender's name. Incident alerts link straight to the incident chat, and you can rename the default alerts channel. See [Incidents and Slack](/incidents-and-slack).
+
+  **Dashboard filters.** The agent can define dropdowns and multi-selects that sit under the time tape and filter the whole board.
+
+  **Monitors list** becomes collapsible rows with a status sparkline and a two-pane detail view.
+</Update>
+
+<Update label="Week of June 15, 2026" tags={["Telemetry"]}>
+  **Telemetry moved to ClickHouse.** Your signals now land in a ClickHouse database scoped to your workspace — much faster queries over much longer windows.
+
+  **Monitors get folders**, and every root `.tsx` file in your workspace becomes a dashboard tab named after the file.
+
+  **Unread markers** per chat, plus local caching of transcripts so the app opens on what you were reading instead of a spinner.
+</Update>
+
+<Update label="Week of June 8, 2026" tags={["Docs"]}>
+  **Documentation and public changelog.** OnePatch now has public documentation at [docs.onepatch.dev](https://docs.onepatch.dev), including a one-stop [getting-started guide](/getting-started) and reference for monitors, dashboards, and incidents. It is written to be read by an AI agent as well as a person — the full text is at [llms-full.txt](https://docs.onepatch.dev/llms-full.txt).
+
+  **New substrate.** Every workspace now runs in its own isolated private network on AWS, with signed images and no credentials shared between workspaces.
+
+  **Provisioning a new workspace** dropped from around five minutes to under two.
+</Update>
+
+<Update label="Week of June 1, 2026" tags={["Incidents"]}>
+  **Incidents.** A monitor that fires opens a chat named after it, and the agent works the incident from there through a real state machine — including the case where a check can't run at all.
+
+  **Time range on dashboards** is owned by the UI: drag to zoom, crosshair on hover, and the range applies to every chart on the board.
+
+  **The agent can open pull requests** against your connected repos, and org-wide group chats carry per-message authorship.
+</Update>
+
+<Update label="Week of May 25, 2026" tags={["App"]}>
+  **The agent can ask you questions** mid-task; the choices render in the composer and your answer goes straight back into the run.
+
+  **Command palette.** ⌘K to jump between chats, dashboards, and monitors.
+
+  **Dashboard design pass.** Unit-aware axes and tooltips, a refresh-cadence control, and a readable dark mode.
+</Update>
+
+<Update label="Week of May 18, 2026" tags={["Monitors"]}>
+  **Monitors ship.** A monitor is a TypeScript program on a cron that queries your telemetry and emits a result — written and edited by the agent, stored in your workspace repo.
+
+  **Saved dashboards** get a full-page view of their own.
+
+  **Slack onboarding** creates your alerts channel and posts a test alert so you can see the whole path works.
+</Update>
+
+<Update label="Week of May 11, 2026" tags={["Telemetry"]}>
+  **Per-workspace OpenTelemetry ingest.** You get an endpoint and a token; anything you send becomes queryable by the agent.
+
+  **Guided onboarding.** Connect GitHub, connect Slack, and watch provisioning progress step by step instead of staring at a spinner.
+
+  **Chat improvements.** Message the agent while it is still responding, and drag or paste images into the composer.
+</Update>
+
+<Update label="Week of May 4, 2026" tags={["Platform"]}>
+  **First light.** Sign in, connect a GitHub repo, and get a provisioned workspace with an agent in it. Everything above starts here.
 </Update>
