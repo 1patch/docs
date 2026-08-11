@@ -38,6 +38,7 @@
   --op-ink: #171717;
   --op-ink-soft: #4a4744;
   --op-rule: #171717;
+  --op-rule-faint: #d5cfc1;
   --op-accent: #e2502c;
 }
 
@@ -46,6 +47,7 @@
   --op-ink: #e9e8e3;
   --op-ink-soft: #ada9a0;
   --op-rule: #99988f;
+  --op-rule-faint: #2b2b30;
   --op-accent: #ef6235;
 }
 
@@ -243,4 +245,76 @@ img.nav-logo {
   color: var(--op-ink-soft);
   font-weight: 400;
   margin-left: 8px;
+}
+
+/* ── Changelog. ─────────────────────────────────────────────────────────────
+ * Mintlify's <Update> is built for a short label in a 160px rail — a version
+ * string like "v0.1.0". We lead with the feature name instead and let the date
+ * be a detail, so three things have to move: the rail widens enough to hold a
+ * real name, the label sheds its accent pill to become the entry's title, and
+ * the tag + date drop to a quiet line beneath it.
+ *
+ * The rail column is `.update-container > div:first-child`; inside it Mintlify
+ * emits, in order, an anchor stub, the label <button>, an sr-only span, the
+ * tags row (the flex child), and the description (the last child).
+ *
+ * These lean on Mintlify's DOM order and its Tailwind utilities, so a framework
+ * upgrade can move them. Everything degrades to plain-but-legible if it does.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/* Scoped with :has() so it only touches pages actually built from <Update>.
+ * The two-column entry layout needs more measure than a prose page — but only
+ * once there's room for two columns. Below xl, Mintlify stacks the rail above
+ * the body and its own narrower prose measure is the right one, so leave it. */
+@media (min-width: 1280px) {
+  #content-area:has(.update-container) {
+    max-width: 52rem;
+  }
+}
+
+/* Depth is a 1px rule, never a shadow — and 46 entries with no divider read as
+ * one undifferentiated wall, so the rule is doing real work here, not decor. */
+.update-container {
+  border-top: 1px solid var(--op-rule-faint);
+  padding-top: 1.75rem !important;
+  padding-bottom: 1.75rem !important;
+}
+.update-container:first-of-type {
+  border-top: none;
+  padding-top: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .update-container > div:first-child {
+    width: 15rem !important;
+  }
+}
+
+/* The label is the entry. Xenon is the display face the rest of the docs use
+ * for headings; left-aligned and untinted so it reads as a title, not a chip.
+ * Accent is reserved for hover, where it still signals "this is a link". */
+.update-container > div:first-child > button {
+  display: block !important;
+  background-color: transparent !important;
+  color: var(--op-ink) !important;
+  font-family: "Monaspace Xenon", "Monaspace Neon", ui-monospace, monospace;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em;
+  text-align: left !important;
+  padding: 0 !important;
+}
+.update-container > div:first-child > button:hover {
+  color: var(--op-accent) !important;
+}
+
+/* Tag and date: the metadata under the name, not competing with it. */
+.update-container > div:first-child > div.flex,
+.update-container > div:first-child > div:last-child {
+  color: var(--op-ink-soft) !important;
+  font-size: 0.75rem !important;
+  margin-top: 0.5rem !important;
+  padding-left: 0 !important;
+  max-width: none !important;
 }
