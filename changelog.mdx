@@ -3,8 +3,8 @@ title: Changelog
 description: What's new in OnePatch.
 ---
 
-<Update label="Review queue on the home page" description="Aug 11, 2026" tags={["App"]}>
-  Signing in lands on `/`, which lists the pull requests the agent has opened and is waiting on you to review.
+<Update label="Pull requests on the home page" description="Aug 11, 2026" tags={["App"]}>
+  The home page leads with the pull requests the agent has opened, each with the monitor history that prompted it — enough to judge the change without leaving the page. Underneath, a table lists every pull request across your connected repos.
 </Update>
 
 <Update label="Phone and tablet layout" description="Aug 10, 2026" tags={["App"]}>
@@ -12,7 +12,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="Episodes" description="Aug 10, 2026" tags={["Incidents"]}>
-  An agent can fold its incident into a related one. The group draws as a single object rather than a row of separate chats.
+  When a new incident turns out to be part of one already open, the agent merges them into a single episode. You follow one thread instead of a row of separate chats.
 </Update>
 
 <Update label="AWS account access" description="Aug 7, 2026" tags={["Agent"]}>
@@ -168,7 +168,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="Monitors" description="May 23, 2026" tags={["Monitors"]}>
-  A monitor is a TypeScript program on a cron that queries your telemetry and emits a result. The agent writes and edits them; they live in your workspace repo.
+  A monitor is a TypeScript program on a cron that queries your telemetry and returns a result. The agent writes and edits them; they live in your workspace repo.
 </Update>
 
 <Update label="Chat while the agent works" description="May 13, 2026" tags={["Chat"]}>
