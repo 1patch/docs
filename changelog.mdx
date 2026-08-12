@@ -23,10 +23,6 @@ description: What's new in OnePatch.
   One workspace-wide memory that carries across chats, so the agent doesn't start cold every time.
 </Update>
 
-<Update label="Shorter agent reports" description="Aug 6, 2026" tags={["Agent"]}>
-  The agent leads with the result instead of narrating how it got there.
-</Update>
-
 <Update label="Email-inbox monitors" description="Aug 4, 2026" tags={["Monitors"]}>
   Every workspace gets an ingest address. Forward alert email from any vendor and it becomes telemetry a monitor can act on.
 </Update>
@@ -43,14 +39,6 @@ description: What's new in OnePatch.
   OTLP histograms are exposed as a typed view the agent can query directly.
 </Update>
 
-<Update label="Sign-out revokes the session" description="Jul 21, 2026" tags={["Platform"]}>
-  Logging out revokes the session server-side, not just in your browser.
-</Update>
-
-<Update label="Query cost limits" description="Jul 20, 2026" tags={["Telemetry"]}>
-  Dashboard and agent queries are bounded and cached, so one heavy board can't starve everything else in the workspace.
-</Update>
-
 <Update label="Keyboard and screen-reader support" description="Jul 15, 2026" tags={["App"]}>
   Chat, dashboards, monitors, the command palette, and onboarding are navigable by keyboard and announced to screen readers.
 </Update>
@@ -63,24 +51,12 @@ description: What's new in OnePatch.
   Hand-off retries every tick until an agent acknowledges it, and resolution waits until the check is observed green. A dead-man alarm fires if monitor evaluation itself stops.
 </Update>
 
-<Update label="Incident status as a pinned tab" description="Jul 10, 2026" tags={["Incidents"]}>
-  The status card sits beside the transcript rather than in the sidebar.
-</Update>
-
-<Update label="Keyboard-navigable workspace switcher" description="Jul 10, 2026" tags={["App"]}>
-  Arrow keys move through the list and enter switches.
-</Update>
-
-<Update label="Quieter transcripts" description="Jul 8, 2026" tags={["Chat"]}>
-  The agent's internal bookkeeping notes no longer render as messages.
-</Update>
-
 <Update label="Live Slack incident cards" description="Jul 2, 2026" tags={["Slack"]}>
   The Slack card rewrites itself as the incident moves through its phases, so the channel shows current state rather than a pile of updates.
 </Update>
 
 <Update label="Incident status card" description="Jul 1, 2026" tags={["Incidents"]}>
-  Incident chats open with a status-page-style card: what fired, what phase it's in, what changed.
+  Incident chats open with a status-page-style card — what fired, what phase it's in, what changed — pinned beside the transcript.
 </Update>
 
 <Update label="Bring your own MCP servers" description="Jun 30, 2026" tags={["API"]}>
@@ -88,7 +64,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="Workspace switcher" description="Jun 30, 2026" tags={["App"]}>
-  A full-page switcher for every org you belong to. Switching no longer signs you out.
+  A full-page switcher lists every org you belong to.
 </Update>
 
 <Update label="Monitors list with sparklines" description="Jun 27, 2026" tags={["Monitors"]}>
@@ -103,28 +79,12 @@ description: What's new in OnePatch.
   The agent can define dropdowns and multi-selects that sit under the time tape and filter the whole board.
 </Update>
 
-<Update label="Monitor folders" description="Jun 17, 2026" tags={["Monitors"]}>
-  Monitors live in a folder tree in your workspace repo rather than a flat list.
-</Update>
-
 <Update label="Dashboard tabs from files" description="Jun 17, 2026" tags={["Dashboards"]}>
   Every root `.tsx` file in your workspace becomes a dashboard tab named after the file.
 </Update>
 
-<Update label="Unread markers" description="Jun 17, 2026" tags={["Chat"]}>
-  Per-user, per-chat, and durable, so a chat the agent moved on without you is visible in the sidebar.
-</Update>
-
-<Update label="Local transcript cache" description="Jun 17, 2026" tags={["Chat"]}>
-  The app caches chat history in the browser and opens on what you were reading instead of a spinner.
-</Update>
-
-<Update label="Telemetry moved to ClickHouse" description="Jun 16, 2026" tags={["Telemetry"]}>
-  Your signals land in a ClickHouse database scoped to your workspace. Queries run faster over much longer windows.
-</Update>
-
-<Update label="Faster provisioning" description="Jun 14, 2026" tags={["Platform"]}>
-  A new workspace comes up in 99 seconds, down from 311.
+<Update label="Longer query windows" description="Jun 16, 2026" tags={["Telemetry"]}>
+  Queries run over much longer windows and return faster. Your signals live in a ClickHouse database scoped to your workspace.
 </Update>
 
 <Update label="Isolated workspace networks" description="Jun 12, 2026" tags={["Platform"]}>
@@ -139,8 +99,8 @@ description: What's new in OnePatch.
   A monitor that fires opens a chat named after it, and the agent works the incident from there through a real state machine. A check that can't run at all pages the agent too.
 </Update>
 
-<Update label="Dashboard time range" description="Jun 1, 2026" tags={["Dashboards"]}>
-  Drag to zoom, crosshair on hover, and the range applies to every chart on the board.
+<Update label="Full-page dashboards" description="Jun 1, 2026" tags={["Dashboards"]}>
+  A saved dashboard opens at full width on its own page. Axes and tooltips carry units, and dragging to zoom applies the new range to every chart on the board.
 </Update>
 
 <Update label="The agent opens pull requests" description="Jun 1, 2026" tags={["Agent"]}>
@@ -159,16 +119,8 @@ description: What's new in OnePatch.
   ⌘K jumps to any chat, dashboard, or monitor.
 </Update>
 
-<Update label="Dashboard redesign" description="May 27, 2026" tags={["Dashboards"]}>
-  Unit-aware axes and tooltips, a refresh-cadence control, and a dark mode that stays readable.
-</Update>
-
-<Update label="Full-page dashboards" description="May 24, 2026" tags={["Dashboards"]}>
-  A saved dashboard opens at full width on its own page.
-</Update>
-
 <Update label="Monitors" description="May 23, 2026" tags={["Monitors"]}>
-  A monitor is a TypeScript program on a cron that queries your telemetry and returns a result. The agent writes and edits them; they live in your workspace repo.
+  A monitor is a TypeScript program on a cron that queries your telemetry and returns a result. The agent writes and edits them; they live in a folder tree in your workspace repo.
 </Update>
 
 <Update label="Chat while the agent works" description="May 13, 2026" tags={["Chat"]}>
