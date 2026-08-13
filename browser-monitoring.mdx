@@ -26,6 +26,12 @@ Commit and push. Sessions arrive the next time someone loads your app:
 Which browser sessions has acme-web recorded in the last 15 minutes?
 ```
 
+## If your API is on another origin
+
+Same-origin calls are joined to their backend traces automatically. A cross-origin API needs two things: list it in `connectTracesTo`, and add `traceparent` to its `Access-Control-Allow-Headers`. If it takes cookies, name `traceparent` explicitly — a wildcard is invalid for credentialed requests.
+
+Skipping it breaks nothing. Each listed origin is probed at startup and gets trace headers only if it accepts them; an origin that refuses is left alone and logs the fix, and you lose the join rather than the request. Your ingest endpoint needs nothing — it already answers browser preflights.
+
 ## By hand
 
 ```sh
@@ -38,7 +44,7 @@ import { identifyUser, startRum } from "@onepatch/rum";
 await startRum({
   ingestUrl: "https://your-org.logger.onepatch.dev",
   ingestToken: "op_…",
-  appName: "acme-web",       // becomes service.name; name it after your backend
+  appName: "acme-web",       // becomes service.name; keep it stable, queries pivot on it
   environment: "production",
   appVersion: commitSha,     // required
   connectTracesTo: ["https://api.acme.com"], // cross-origin backends only
@@ -47,7 +53,7 @@ await startRum({
 identifyUser({ id: user.id, email: user.email, orgId: user.orgId });
 ```
 
-Call `startRum` once, early, on a client path, and `identifyUser` where your app knows who is signed in. Origins in `connectTracesTo` are probed at startup and get trace headers only if their CORS accepts them, so a strict backend costs you the correlation and never the request. Name your product's own steps with `recordAction("ran-workflow", { workflowId })`.
+Call `startRum` once, early, on a client path, and `identifyUser` where your app knows who is signed in. Name your product's own steps with `recordAction("ran-workflow", { workflowId })`.
 
 Every option is in the [package README](https://github.com/1patch/rum). The package is Apache-2.0 and speaks plain OTLP.
 
