@@ -1,0 +1,134 @@
+---
+title: Browser monitoring
+sidebarTitle: Browser
+description: See what a person actually did in your app — pages, clicks, failed requests and JS errors, in order, joined to the backend traces they caused.
+---
+
+Your backend telemetry says a request took 50ms. Browser telemetry says the person clicked **Save**, waited four seconds, and saw an error. `@onepatch/rum` is the package that gives you the second half: page views, clicks, `fetch` and XHR spans, JS errors and web vitals, each one stamped with a session id and, where your backend accepts it, the same trace id your server span carries.
+
+**There is no session replay.** No DOM is captured, no keystrokes, no form contents. That is a deliberate choice rather than a missing feature — an investigation reads the ordered list of what someone did, and skipping the recorder keeps the payload small, the privacy story ordinary, and retention uncomplicated.
+
+## Install
+
+You need the ingest URL and token from **Workspace settings → integrations** — the same pair your backend already uses. The token is write-only: it can send telemetry and cannot read anything back, so it belongs in your frontend bundle the way a Sentry DSN does. Commit it, inline it, put it in a `NEXT_PUBLIC_*` or `VITE_*` variable. Don't build a proxy to hide it.
+
+<Steps>
+  <Step title="Add the package">
+    ```sh
+    bun add @onepatch/rum   # or npm / pnpm / yarn
+    ```
+  </Step>
+  <Step title="Start it once, early, on a client path">
+    `startRum` must run exactly once per page load, before your app's own `fetch` calls, or the first few go untraced. It no-ops outside a browser, so importing it from server-rendered code is safe.
+
+    <CodeGroup>
+    ```ts Vite / React (src/main.tsx)
+    import { startRum } from "@onepatch/rum";
+
+    startRum({
+      ingestUrl: import.meta.env.VITE_ONEPATCH_INGEST_URL,
+      ingestToken: import.meta.env.VITE_ONEPATCH_INGEST_TOKEN,
+      appName: "acme-web",
+      environment: import.meta.env.MODE,
+      appVersion: import.meta.env.VITE_COMMIT_SHA,
+    });
+    ```
+
+    ```ts Next.js 15+ (instrumentation-client.ts)
+    import { startRum } from "@onepatch/rum";
+
+    startRum({
+      ingestUrl: process.env.NEXT_PUBLIC_ONEPATCH_INGEST_URL!,
+      ingestToken: process.env.NEXT_PUBLIC_ONEPATCH_INGEST_TOKEN!,
+      appName: "acme-web",
+      environment: process.env.NEXT_PUBLIC_ENV!,
+      appVersion: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA!,
+    });
+    ```
+    </CodeGroup>
+
+    Next.js runs `instrumentation-client.ts` before hydration, which is exactly the right moment. For SvelteKit use `src/hooks.client.ts`, for Nuxt a client plugin, and for anything else your existing entry file.
+  </Step>
+  <Step title="Say who is here">
+    As soon as you know:
+
+    ```ts
+    import { identifyUser } from "@onepatch/rum";
+
+    identifyUser({ id: user.id, email: user.email, orgId: user.orgId });
+    ```
+
+    This is the highest-value few minutes of the whole setup. Without it you have sessions; with it you can answer "what did *this* customer see" when they write in. `name` and `orgName` are also conventional, and anything else you pass through becomes a filter you can use.
+  </Step>
+</Steps>
+
+Three of those options decide whether the data is still useful a month from now, so it's worth getting them right rather than plausible:
+
+- **`appName` names the app after the service it belongs to.** If your backend is `acme-api`, this is `acme-web`. It becomes `service.name`, and an unrelated name puts the two halves of one trace in two unrelated places.
+- **`environment` comes from wherever your backend reads its own** — not a hand-typed `"production"` in a file that gets copied to staging. If the two halves disagree, every environment-filtered query returns half a trace, and both halves individually look fine.
+- **`appVersion` is your commit sha.** It becomes `service.version`, which is what turns "errors went up at 14:20" into "errors went up on this deploy".
+
+<Note>
+Nothing the package exports throws. A bad option is reported through the returned status and a `console.error`; calling `identifyUser` before `startRum` warns and does nothing. A telemetry SDK that white-screens a checkout page has done more damage than the data was worth.
+</Note>
+
+## Joining browser spans to your backend
+
+Same-origin requests are joined automatically — nothing to configure. Cross-origin backends are opt-in, one origin at a time:
+
+```ts
+startRum({ …, connectTracesTo: ["https://api.acme.com"] });
+```
+
+The reason it isn't automatic is worth knowing, because it's the one way browser tracing can hurt you. Joining a browser span to a server span means attaching a `traceparent` header. On a cross-origin request that makes it preflighted, and if that backend's `Access-Control-Allow-Headers` doesn't cover `traceparent`, **the browser refuses to send the request at all**. You lose the API call, not just the correlation.
+
+So the package asks first. At startup it probes each listed origin with up to three deliberately boring `GET`s to `/.well-known/onepatch-rum-probe`, and enables propagation only for origins that accept the header. A 404 is a pass — the only question being asked is whether the preflight cleared. An origin that refuses is left alone and logs a warning naming the fix, which is to add `traceparent` to that backend's allowed headers. The worst case is a missing correlation; it is never a broken request.
+
+Three requests rather than one, because of an asymmetry in CORS that a single probe would miss: `Access-Control-Allow-Headers: *` satisfies a request that sends no credentials but is illegal for one that does. So a backend can pass the obvious probe while propagating would still break every cookie-bearing request your app makes. The extra two ask whether credentialed requests reach that origin at all, and separate the genuinely-safe wildcard case from the trap.
+
+Wildcards are refused. `["https://*"]` would attach trace headers to every third-party request your page makes — your payment provider, your CDN, your analytics — and any one of them rejecting the header breaks that request. List the backends you own.
+
+If you already know your CORS policy allows `traceparent`, `skipBackendCheck: true` connects without asking.
+
+## Name the actions you would actually search for
+
+Clicks and navigations are captured for you. Use `recordAction` for the step in your product's own vocabulary — the thing you'd type into a search box six weeks from now:
+
+```ts
+recordAction("ran-workflow", { workflowId });
+```
+
+A handful of well-named actions on your critical paths — signup completed, checkout submitted, report exported — is worth more than exhaustive coverage.
+
+## Asking about it
+
+Browser spans land in the same place as your backend spans, so you ask the agent in the same chat, with no separate RUM view to learn:
+
+```text
+The customer at deep@acme.com says the export button did nothing
+this morning. What did they actually do?
+```
+
+```text
+Is the app slow for users right now, or is it just my handler?
+```
+
+That second question is the one server telemetry can't answer. The agent compares each browser span against the server span it caused; the gap is connection setup, TLS, the preflight, proxy and load-balancer queueing, transfer, and time the request sat queued in the browser. A large gap next to a flat server latency says the latency isn't in your handler, so no amount of profiling it will help.
+
+Because `appVersion` is your commit sha, "did the deploy do it?" is a grouping rather than a guess. And you can ask for monitors on browser signals like any other — expect the agent to reach for rates over a minimum session count rather than raw error counts, because one person with a broken extension produces a burst that looks exactly like an incident.
+
+## What is not captured
+
+No DOM, no replay, no keystrokes, no form contents.
+
+URLs are recorded as they are, including query strings. That is the default because the query and the fragment are usually the only place a URL says *which thing* — `?workflow=42`, or a hash route where the fragment is the entire route. Scrubbed, "which page was the user on when this broke" stops having an answer.
+
+Turn on `scrubQueryStrings: true` when your URLs carry secrets rather than identifiers — password-reset tokens, magic-link codes, invite codes, email addresses. It drops the query and the fragment from every recorded URL before the span leaves the browser. Telemetry storage is permanent, so that risk is real; it's just fixable at the source in a way that a route you never recorded is not. There is no partial mode, because an allowlist of "safe" parameters is a list somebody forgets to update.
+
+`console.*` forwarding is off by default for the same reason — console lines carry personal data more often than spans do. Turn it on with `captureConsole: true`.
+
+## Built on OpenTelemetry
+
+130 KB gzipped. Under the hood the package wraps the OpenTelemetry browser SDKs and speaks plain OTLP, so nothing here locks you in. It is Apache-2.0 and the source is at [github.com/1patch/rum](https://github.com/1patch/rum).
+
+For server-side instrumentation, see [Getting started](/getting-started#5-send-telemetry).
