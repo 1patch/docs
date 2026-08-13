@@ -1,20 +1,12 @@
 ---
 title: Browser monitoring
 sidebarTitle: Browser
-description: Instrument your frontend with @onepatch/rum — page views, clicks, failed requests and JS errors, joined to your backend traces.
+description: See what a person did in your web app — pages, clicks, failed requests and JS errors, joined to your backend traces.
 ---
 
-`@onepatch/rum` captures page views, clicks, `fetch` and XHR spans, JS errors and web vitals. Each one carries a session id and, where your backend accepts trace headers, the same trace id as the server span.
+`@onepatch/rum` sends page views, clicks, `fetch` and XHR spans, JS errors and web vitals to your workspace, each under a session id and joined to the backend trace it caused.
 
-There is no session replay: no DOM, no keystrokes, no form contents.
-
-## Before you start
-
-Take your ingest URL and token from **Workspace settings → Integrations** — the same pair your backend uses. The token is write-only and scoped to your tenant, so it belongs in your bundle the way a Sentry DSN does.
-
-## Install with a coding agent
-
-Paste this into your agent, with your own URL and token:
+Paste this into your coding agent, with the endpoint and token from **Workspace settings → integrations**:
 
 ```text
 Add OnePatch browser monitoring to this frontend.
@@ -26,12 +18,18 @@ Then instrument the browser with the URL and write-only token.
 Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
 ```
 
-It finds your entry point and auth path, wires identity, checks your backends' CORS, and records what it did in `TELEMETRY.md`.
+It finds your entry point, wires identity, checks your backends' CORS, and records what it did in `TELEMETRY.md`. This is the same write-only token your services use, so it is safe to commit, like a Sentry DSN.
 
-## Install by hand
+Commit and push. Sessions arrive the next time someone loads your app:
+
+```text
+Which browser sessions has acme-web recorded in the last 15 minutes?
+```
+
+## By hand
 
 ```sh
-bun add @onepatch/rum   # or npm / pnpm / yarn
+bun add @onepatch/rum
 ```
 
 ```ts
@@ -40,42 +38,21 @@ import { identifyUser, startRum } from "@onepatch/rum";
 await startRum({
   ingestUrl: "https://your-org.logger.onepatch.dev",
   ingestToken: "op_…",
-  appName: "acme-web",
+  appName: "acme-web",       // becomes service.name; name it after your backend
   environment: "production",
-  appVersion: commitSha,
-  connectTracesTo: ["https://api.acme.com"], // only if your API is cross-origin
+  appVersion: commitSha,     // required
+  connectTracesTo: ["https://api.acme.com"], // cross-origin backends only
 });
 
 identifyUser({ id: user.id, email: user.email, orgId: user.orgId });
 ```
 
-| Option | |
-| --- | --- |
-| `ingestUrl` | Your tenant's ingest URL, with or without the trailing `/v1/traces`. |
-| `ingestToken` | Your `op_…` token. |
-| `appName` | Becomes `service.name`. Name it `<service>-web` after the backend it talks to, and keep it stable — every query pivots on it. |
-| `environment` | Becomes `deployment.environment.name`. Read it where your backend reads its own. |
-| `appVersion` | Required. Becomes `service.version`; pass the commit sha your build already exposes. |
-| `connectTracesTo` | Cross-origin backends to join traces with, as explicit origins. Same-origin requests are joined automatically. |
+Call `startRum` once, early, on a client path, and `identifyUser` where your app knows who is signed in. Origins in `connectTracesTo` are probed at startup and get trace headers only if their CORS accepts them, so a strict backend costs you the correlation and never the request. Name your product's own steps with `recordAction("ran-workflow", { workflowId })`.
 
-Call `startRum` once, early, on a client path. Call `identifyUser` wherever your app already knows who is signed in; sessions before that point are recorded anonymously. Every option is in the [package README](https://github.com/1patch/rum).
-
-Name your own steps with `recordAction("ran-workflow", { workflowId })`. Clicks and navigations are already captured; three to six named steps on the paths that matter beats wrapping every button.
-
-Trace headers make a cross-origin request preflighted, and a backend whose `Access-Control-Allow-Headers` omits `traceparent` refuses it outright. So each origin in `connectTracesTo` is probed at startup, propagation is enabled only where the header is accepted, and an origin that refuses is left alone and logs the fix. `await startRum` resolves with which origins connected. The cost of a strict backend is a missing correlation, never a broken request.
-
-## Verify
-
-Browser spans land beside your backend spans, so ask in the same chat:
-
-```text
-Which browser sessions has acme-web recorded in the last 15 minutes?
-```
+Every option is in the [package README](https://github.com/1patch/rum). The package is Apache-2.0 and speaks plain OTLP.
 
 ## Privacy
 
-No DOM, no replay, no keystrokes, no form contents. Console capture is off by default.
+Spans record URLs, timings and error messages. The DOM is never captured, so keystrokes and form contents never leave the browser. Console capture is off by default.
 
-URLs keep their query strings and fragments, because that is usually where the URL says *which* thing — `?workflow=42`, or a hash route. Set `scrubQueryStrings: true` if yours carry reset tokens or email addresses rather than ids.
-
-The package is Apache-2.0 and speaks plain OTLP.
+URLs keep their query strings, because that is usually where the URL says *which* thing — `?workflow=42`. Set `scrubQueryStrings: true` if yours carry reset tokens or email addresses rather than ids.
