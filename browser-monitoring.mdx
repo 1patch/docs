@@ -45,12 +45,19 @@ await startRum({
   environment: "production",
   appVersion: commitSha,     // required
   connectTracesTo: ["https://api.acme.com"], // cross-origin backends only
+  // Required: the person, a resolver awaited once, or "anonymous".
+  user: async () => (await getSession())?.user ?? null,
 });
 
+// Later, when it changes — a sign-in, a workspace switch, a sign-out:
 identifyUser({ id: user.id, email: user.email, orgId: user.orgId });
 ```
 
-Call `startRum` once, on a path that only runs in the browser — it does not work during server-side rendering. Call `identifyUser` wherever your app finds out who is signed in.
+Call `startRum` once, on a path that only runs in the browser — it does not work during server-side rendering.
+
+`user` has no default, because telemetry with nobody attached cannot answer "what did *this* person do", which is most of why you want it. A resolver may return `null` — a login page, a load before the session request lands — and `(await startRum(…)).identified` tells you whether anyone was attached. Pass `user: "anonymous"` only for an app with no sign-in.
+
+On a sign-out or a workspace switch, pass `null` for what no longer applies: `identifyUser({ id: null, orgId: null })`. An absent key leaves the previous value on every later span.
 
 The [package README](https://github.com/1patch/rum) documents every option.
 
