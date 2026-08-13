@@ -4,7 +4,7 @@ sidebarTitle: Browser
 description: See what a person did in your web app — pages, clicks, failed requests and JS errors, joined to your backend traces.
 ---
 
-`@onepatch/rum` sends page views, clicks, `fetch` and XHR spans, JS errors and web vitals to your workspace, each under a session id and joined to the backend trace it caused.
+`@onepatch/rum` records page views, clicks, `fetch` and XHR requests, JS errors and web vitals from your web app, and sends them to your workspace. Everything one person does is grouped under a session id, and each request is linked to the backend trace it caused.
 
 Paste this into your coding agent, with the endpoint and token from **Workspace settings → integrations**:
 
@@ -18,13 +18,28 @@ Then instrument the browser with the URL and write-only token.
 Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
 ```
 
-It finds your entry point, wires identity, checks your backends' CORS, and records what it did in `TELEMETRY.md`. This is the same write-only token your services use, so it is safe to commit, like a Sentry DSN.
+The skill finds your app's entry point, adds the code that identifies your signed-in users, checks whether your backends accept trace headers, and writes down what it did in `TELEMETRY.md`.
+
+This is the same write-only token your services already use. It can send telemetry but cannot read anything back, so it is safe to commit, like a Sentry DSN.
 
 Commit and push. Sessions arrive the next time someone loads your app:
 
 ```text
 Which browser sessions has acme-web recorded in the last 15 minutes?
 ```
+
+## If your API is on another origin
+
+Requests to the same origin as your page are joined to their backend traces automatically, with nothing to configure.
+
+If your API is on a different origin, do both of these:
+
+1. List that origin in `connectTracesTo`.
+2. Add `traceparent` to that API's `Access-Control-Allow-Headers` response header. If the API accepts cookies, list `traceparent` by name — a `*` wildcard is not valid for requests that send credentials.
+
+If you skip the second step, nothing in your app breaks. At startup the SDK sends a test request to each origin you listed, and sends trace headers only to the ones that accept them. An origin that refuses is left alone, and a warning in the console names the fix. What you lose is the link between the browser span and the backend span, not the API call itself.
+
+Your OnePatch ingest endpoint already accepts browser requests. There is nothing to configure there.
 
 ## By hand
 
@@ -38,7 +53,7 @@ import { identifyUser, startRum } from "@onepatch/rum";
 await startRum({
   ingestUrl: "https://your-org.logger.onepatch.dev",
   ingestToken: "op_…",
-  appName: "acme-web",       // becomes service.name; name it after your backend
+  appName: "acme-web",       // becomes service.name; pick one and keep it
   environment: "production",
   appVersion: commitSha,     // required
   connectTracesTo: ["https://api.acme.com"], // cross-origin backends only
@@ -47,12 +62,16 @@ await startRum({
 identifyUser({ id: user.id, email: user.email, orgId: user.orgId });
 ```
 
-Call `startRum` once, early, on a client path, and `identifyUser` where your app knows who is signed in. Origins in `connectTracesTo` are probed at startup and get trace headers only if their CORS accepts them, so a strict backend costs you the correlation and never the request. Name your product's own steps with `recordAction("ran-workflow", { workflowId })`.
+There are three functions you will use:
 
-Every option is in the [package README](https://github.com/1patch/rum). The package is Apache-2.0 and speaks plain OTLP.
+- **`startRum`** — call it once, as early as you can, on a path that only runs in the browser. Calling it during server-side rendering will not work.
+- **`identifyUser`** — call it wherever your app finds out who is signed in. Sessions recorded before that point are kept, just without a user attached to them.
+- **`recordAction`** — call it to record a step in your product's own vocabulary, such as `recordAction("ran-workflow", { workflowId })`. Clicks and page views are already recorded for you, so use this for the few actions you would actually search for later.
+
+The [package README](https://github.com/1patch/rum) documents every option. The package is Apache-2.0 licensed and sends standard OTLP.
 
 ## Privacy
 
 Spans record URLs, timings and error messages. The DOM is never captured, so keystrokes and form contents never leave the browser. Console capture is off by default.
 
-URLs keep their query strings, because that is usually where the URL says *which* thing — `?workflow=42`. Set `scrubQueryStrings: true` if yours carry reset tokens or email addresses rather than ids.
+Query strings are recorded as part of the URL. They are kept because they are usually the part that says which thing the user was looking at, such as `?workflow=42`. Set `scrubQueryStrings: true` if your URLs carry password-reset tokens or email addresses instead of ids.
