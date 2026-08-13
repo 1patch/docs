@@ -12,6 +12,22 @@ Your backend telemetry says a request took 50ms. Browser telemetry says the pers
 
 You need the ingest URL and token from **Workspace settings → integrations** — the same pair your backend already uses. The token is write-only: it can send telemetry and cannot read anything back, so it belongs in your frontend bundle the way a Sentry DSN does. Commit it, inline it, put it in a `NEXT_PUBLIC_*` or `VITE_*` variable. Don't build a proxy to hide it.
 
+The quickest path is to hand it to your coding agent. Paste this into Claude Code, Cursor, or similar, with your own two values filled in:
+
+```text
+Add OnePatch browser monitoring to this frontend.
+
+First, install the setup skill (one-time):
+npx skills add 1patch/skills -s rum-instrument
+
+Then instrument the browser with the URL and write-only token.
+Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+```
+
+It finds your app's entry point and auth path, checks each backend's CORS before turning on trace propagation, writes tests, and records what it did in your `TELEMETRY.md`. The skill is open source at [github.com/1patch/skills](https://github.com/1patch/skills).
+
+To wire it up by hand instead:
+
 <Steps>
   <Step title="Add the package">
     ```sh
