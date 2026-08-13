@@ -20,11 +20,7 @@ Endpoint: https://your-org.logger.onepatch.dev. Token: op_xxxxxxxxxxxxxxxxxxxxxx
 
 The token is write-only, so it is safe to commit and ship in your bundle, like a Sentry DSN.
 
-Commit and push. Sessions arrive the next time someone loads your app:
-
-```text
-Which browser sessions has acme-web recorded in the last 15 minutes?
-```
+Commit and push. Sessions arrive the next time someone loads your app.
 
 ## If your API is on another origin
 
@@ -32,8 +28,6 @@ Same-origin requests need no setup. For an API on a different origin:
 
 1. List that origin in `connectTracesTo`.
 2. Add `traceparent` to that API's `Access-Control-Allow-Headers`. If the API accepts cookies, list `traceparent` by name — a `*` wildcard is not valid for requests that send credentials.
-
-Skip step 2 and you lose the link to that API's backend traces. Nothing else breaks.
 
 ## By hand
 
@@ -62,6 +56,6 @@ The [package README](https://github.com/1patch/rum) documents every option.
 
 ## Privacy
 
-The DOM is never captured, so keystrokes and form contents never leave the browser. Console capture is off by default.
+The DOM is never captured, so keystrokes and form contents never leave the browser.
 
 Query strings are recorded. Set `scrubQueryStrings: true` if your URLs carry password-reset tokens or email addresses.
