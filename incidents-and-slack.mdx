@@ -28,7 +28,38 @@ Incident alerts post to the `#onepatch-alerts` channel OnePatch creates in your 
 
 ## Talking to the agent from Slack
 
-Send the OnePatch bot a direct message and it answers the same way the in-app chat does. @-mention it in a channel it has been invited to and it replies in a thread; each thread is its own conversation. These conversations appear in the app's sidebar with a Slack marker and the sender's name, so they stay visible to the rest of your team.
+Every conversation is the same agent the in-app chat uses. Slack conversations appear in the app's sidebar with a Slack marker and the sender's name, so they stay visible to the rest of your team.
+
+Four ways to reach it:
+
+- **Direct message.** Message the OnePatch bot and it answers as the in-app chat does. The DM is one continuing conversation.
+- **@-mention in a channel.** Mention the bot in a channel it has been invited to and it replies in a thread. Each thread is its own conversation; reply in the thread to keep it going.
+- **Reply in an incident thread.** Under an incident card in `#onepatch-alerts`, a reply joins that incident's chat. No mention needed.
+- **Watched channels.** Point OnePatch at a channel — a bug-report or support channel, say — and it reads every new top-level message there without a mention, opening a thread on the ones that need attention.
+
+<Note>
+The bot only sees channels it has been invited to. `/invite @onepatch` in Slack first; removing it from a channel always stops it reading there.
+</Note>
+
+## Watched channels
+
+Watching is opt-in per channel, and the list is managed from the integrations screen or from inside the channel itself. Mention the bot with one of these commands as the whole message:
+
+| Say | Effect |
+|---|---|
+| `@onepatch watch` | Start watching this channel. It confirms in the channel. |
+| `@onepatch unwatch` | Stop watching. It still answers when mentioned. |
+| `@onepatch watch status` | Whether this channel is watched. |
+
+`watch this channel`, `start watching`, `stop watching`, and `are you watching` work as well. Anything longer is a message, not a command — `@onepatch watch out, the deploy is landing` is a question for the agent, and the channel's watch state stays as it was.
+
+What a watched channel does:
+
+- Every new top-level message from a person opens its own thread and chat. Replies in that thread continue the same conversation, so a report and its follow-up stay together.
+- A message with a screenshot and a caption counts; edits, deletions, and bot posts do not.
+- The agent stays quiet when a message doesn't need it. A channel that gets an answer to every "thanks!" is a channel people mute.
+- Only public channels can be watched, and only a member of your OnePatch workspace can turn watching on or off. Everything the agent reads there is visible to everyone in the OnePatch workspace, so a private channel is refused; so is `#onepatch-alerts`, where the agent would be triaging its own cards.
+- Up to 20 channels per workspace. As a brake on runaway channels, a channel opens at most 20 new chats an hour and the workspace 60; messages over that are dropped, and replies to open threads are never counted.
 
 ## Firing history
 
