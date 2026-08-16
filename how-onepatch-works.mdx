@@ -25,3 +25,7 @@ Both are live as soon as the agent finishes writing them. [Monitors and dashboar
 ## When something breaks
 
 A monitor can be **armed**. When an armed monitor fires, OnePatch opens an incident and the agent triages it: it investigates the firing, then tunes the monitor if it was a false alarm or opens a pull request if the problem is real. Notifications land in your `#onepatch-alerts` Slack channel. See [Incidents and Slack](/incidents-and-slack).
+
+## When you ship
+
+Every pull request on a connected repository gets a verification plan — checks against your telemetry for what the change should and should not do — posted as one review on the pull request. After it merges and deploys, the checks run through a soak; a regression opens an incident, and a clean result is one edited line on the pull request. See [Change verification](/change-verification).

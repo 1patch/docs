@@ -38,6 +38,7 @@
             "pages": [
               "monitors-and-dashboards",
               "incidents-and-slack",
+              "change-verification",
               "browser-monitoring",
               "connect-aws",
               "connect-your-agent"
