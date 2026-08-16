@@ -37,8 +37,8 @@
             "group": "Guides",
             "pages": [
               "monitors-and-dashboards",
-              "incidents-and-slack",
               "change-verification",
+              "incidents-and-slack",
               "browser-monitoring",
               "connect-aws",
               "connect-your-agent"
