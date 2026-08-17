@@ -37,7 +37,7 @@
             "group": "Guides",
             "pages": [
               "monitors-and-dashboards",
-              "change-verification",
+              "verify-prs-in-prod",
               "incidents-and-slack",
               "browser-monitoring",
               "connect-aws",
@@ -66,5 +66,11 @@
       "website": "https://onepatch.dev",
       "github": "https://github.com/1patch"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/change-verification",
+      "destination": "/verify-prs-in-prod"
+    }
+  ]
 }
