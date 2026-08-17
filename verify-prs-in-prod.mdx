@@ -46,7 +46,7 @@ The status names the environment once your deploy signal labels one.
 
 ## When a check trips
 
-A regression opens an incident, like any armed monitor firing (see [Incidents and Slack](/incidents-and-slack)). The agent first looks for another explanation, like a parallel deploy or an upstream outage; if that clears the pull request, the incident resolves and says so. Otherwise the agent proposes a revert or a fix. Merging it is up to you.
+A regression opens an incident, like any armed monitor firing (see [Incidents and Slack](/incidents-and-slack)). The agent first looks for another explanation, like a parallel deploy or an upstream outage; if that clears the pull request, it resolves the incident and records the explanation. Otherwise the agent proposes a revert or a fix. Merging it is up to you.
 
 ## When every check holds
 
