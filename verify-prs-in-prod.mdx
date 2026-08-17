@@ -1,20 +1,15 @@
 ---
 title: Verify PRs in prod
-description: Every pull request gets checks against your telemetry, run after each deploy until the change is proven.
+description: How each pull request is verified against production after it deploys.
 ---
 
-For every pull request on a connected repository, the agent reads the diff, writes checks against your telemetry for what the change should and should not do, and runs them after each deploy — through the first 10 minutes, then at an hour, a day, and three days. The result is one review comment on the pull request, kept current until the change is verified. It is on for every connected repository; the only setup is the [deploy signal](#what-it-needs).
+The agent verifies every merged pull request against production. It writes checks from the diff while the change is still in review, runs them after each deploy, and reports on the pull request. It is on for every connected repository; the only setup is the [deploy signal](#what-it-needs).
 
-## When a pull request opens
+## The plan
 
-The agent writes two kinds of checks from the diff:
+When a pull request opens, the agent reads the diff and writes two kinds of checks: the effect the change promises and what the touched code could break. A latency fix that does not drop latency counts as a regression too. Each signal is measured before the merge, so every check compares against a real baseline; a check with too little traffic to judge never counts against the change.
 
-- The effect the change promises. A latency fix should drop latency; if it does not, that is a regression too.
-- What the touched code could break — the endpoints, queues, and jobs that call through it.
-
-It measures each signal while the pull request is still open, so after the deploy every check compares against a real baseline. A check with too little traffic to judge is never counted against the change.
-
-The plan is posted as one review comment:
+The plan is one review comment:
 
 ```text
 Batches Redis writes on checkout so p95 drops.
@@ -32,51 +27,38 @@ Would fail it
 `changes/acme--api--pr-42` · armed — awaiting merge
 ```
 
-The last line is the status, kept current until the change is done. That review is the only thing OnePatch posts on a pull request — it edits the same review in place, and it never approves, requests changes, or blocks a merge.
+The agent edits this one review in place, and never approves, requests changes, or blocks a merge. If the change evolves before it merges, ask the agent to revise the plan.
 
-The plan is written when the pull request opens. If the change evolves before it merges, ask the agent to revise it.
-
-Changes that cannot alter runtime behavior — docs, lockfile bumps, formatting, comments, CI config, tests — are skipped without a comment; the reasoning is in that pull request's chat in the app.
+Changes that cannot alter runtime behavior (docs, lockfiles, formatting, CI config, tests) are skipped without a comment.
 
 ## After the merge
 
-Verification waits for the first successful deploy into each of your environments after the merge, in the order you deploy them. The clock starts at the deploy, never at the merge.
+Verification starts at the first successful deploy into each of your environments, in the order you deploy them. The clock starts at the deploy, not the merge. Checks run continuously for the first 10 minutes, then once at 1 hour, 24 hours, and 72 hours. For a risky change, like a data migration or a payment path, the agent watches longer and says so in the plan.
 
-Checks run continuously for the first 10 minutes after each environment's deploy, then once at 1 hour, 24 hours, and 72 hours. For a risky change — a data migration, an auth or payment path — the agent watches longer and says so in the plan.
+The review's last line is the status: `armed — awaiting merge`, then `armed — awaiting deploy`, then `soaking` with a checkpoint count. It ends one of four ways:
 
-The status line moves through the first three states — returning to `awaiting deploy` between environments — and ends on one of the rest:
+- `verified` — every check held through the last checkpoint.
+- `regression` — a check tripped; the line names it and links the incident.
+- `inconclusive` — no deploy observed within 30 days.
+- `retired` — the pull request closed without merging.
 
-| Status | Meaning |
-|---|---|
-| `armed — awaiting merge` | The pull request is still open. |
-| `armed — awaiting deploy` | Merged; no deploy seen yet in the next environment. |
-| `soaking · production · 2 of 4 checkpoints clean` | Deployed; checks holding so far. |
-| `verified · production — soak clean. Monitor retired.` | Every check held. Names the last environment the change reached. |
-| `regression · production — <reason>. Incident opened.` | A check tripped. |
-| `inconclusive — no deploy observed within 30 days. Monitor retired.` | Merged, but never deployed where OnePatch could see it. |
-| `retired — PR closed without merging.` | Nothing to verify. |
-
-The environment name appears once your deploy signal labels one.
+The status names the environment once your deploy signal labels one.
 
 ## When a check trips
 
-A regression opens an incident, handled like any armed monitor firing — see [Incidents and Slack](/incidents-and-slack). Before blaming the change, the agent re-runs the check and looks for another explanation: a parallel deploy, a traffic shift, an upstream outage. If the evidence clears the pull request, the incident resolves and says so. If not, the status line names what tripped and links the incident, and the agent proposes a revert or a fix-forward pull request. Merging it is up to you.
+A regression opens an incident, like any armed monitor firing (see [Incidents and Slack](/incidents-and-slack)). The agent first looks for another explanation, like a parallel deploy or an upstream outage; if that clears the pull request, the incident resolves and says so. Otherwise the agent proposes a revert or a fix. Merging it is up to you.
 
 ## When every check holds
 
-The agent ticks the review's checkboxes, sets the status line to `verified`, and deletes the temporary monitor that ran the checks. No incident, no Slack message, no row on the Monitors screen.
+The agent ticks the checkboxes, sets the status to `verified`, and deletes the temporary monitor. No incident, no Slack message, no row left on the Monitors screen.
 
 ## Where it shows up
 
-- **The pull request** — the review, with its live status line.
-- **Home** — pull requests the agent opened carry a `verification` footer.
-- **Monitors** — one `changes/…` row per pull request in flight. It disappears on a clean verdict; on a regression it stays until the incident resolves.
-- **The Deploys dashboard** — a verdict per version and environment for the last 30 days.
+Besides the review: pull requests the agent opened carry a verification footer on **Home**, the **Monitors** screen shows a `changes/…` row per pull request in flight, and the Deploys dashboard shows a verdict per version and environment for the last 30 days.
 
 ## What it needs
 
-- **A connected GitHub repository.** Every pull request opened after you connect is covered, drafts included.
-- **A deploy signal.** OnePatch has to know which CI/CD event means "this shipped" — a job named `deploy`, a Vercel deployment status, a release workflow on `main`. The agent works this out from your GitHub workflow runs, deployment statuses, and commit statuses, and settles on it once. Plans written before the signal is set say so; ask the agent to re-arm them. If none of those events reflect your deploys, ask the agent to set the signal by hand.
+A connected repository covers every pull request opened after connecting, drafts included. The one thing OnePatch has to work out is the deploy signal: which of your CI/CD events means "this shipped". The agent settles it from your GitHub workflow runs, deployment statuses, and commit statuses. Plans written before then say so; ask the agent to re-arm them. If no GitHub event reflects your deploys, ask the agent to set the signal by hand.
 
 <Note>
 If your deploys happen where GitHub cannot see them, the agent may open a pull request adding one line to your deploy step: a `curl` that reports "deployed" to the telemetry endpoint your apps already use. Decline it and the agent uses the best signal it can see.
@@ -84,6 +66,4 @@ If your deploys happen where GitHub cannot see them, the agent may open a pull r
 
 ## Limits and turning it off
 
-Up to 20 changes verify at once. A pull request past that limit is picked up as capacity frees, or skipped if it is still waiting after three days.
-
-To stop verifying one repository, or all of them, ask the agent. Stopping applies to pull requests opened from then on; changes in flight finish. Excluding one repository turns coverage into an explicit list, so a repository you connect later is not verified until you ask. To change what a plan watches or how long, ask — the agent edits the plan in place.
+Up to 20 changes verify at once; a pull request past the limit waits for capacity, and is skipped after three days. To stop verifying a repository, or all of them, ask the agent. Stopping applies to new pull requests; changes in flight finish. Once one repository is excluded, coverage becomes an explicit list, and repositories you connect later must be added to it.
