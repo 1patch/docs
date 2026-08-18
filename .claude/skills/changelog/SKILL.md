@@ -41,6 +41,8 @@ Within that, order matters: the first clause says what the customer gets — the
 7. Don't narrate the reader's own actions. "Sign in and you land on…", "Navigate to…" — they know how they got there. Start at the news.
 8. Name a feature the way the reader would, not the way the code does. "Fold," "emit," and "seed" are our words for our internals and reach the reader with nothing attached.
 9. Plain subject-verb-object, and finish the sentence. No design-writer verbs — a table *lists*, it doesn't *sit*. And a verbless fragment ("Below that, every pull request across your repos.") only works when the elided verb carries over from the previous clause, which it usually doesn't.
+10. Don't name tunable defaults. "Watches for three days" freezes a config value into the announcement; describe what happens and leave the current setting to the guide, unless the number itself is the promise.
+11. Don't define by contrast with a past the reader never saw. "Without an @-mention" only lands for someone who knew the old requirement; a new reader learns nothing from the aside. Cut clauses whose only job is distinguishing from a prior mode.
 
 ## The scoring rubric
 
