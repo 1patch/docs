@@ -3,12 +3,16 @@ title: Changelog
 description: What's new in OnePatch.
 ---
 
-<Update label="Change verification" description="Aug 16, 2026" tags={["Monitors"]}>
-  Every pull request on a connected repo gets a plan while the code is still in review: one review comment listing what the agent will watch once the change ships, and what would fail it. A temporary monitor checks those signals from deploy through a three-day soak, then reports the verdict — verified, regression, or inconclusive — on the same comment. A regression opens an incident. See [Change verification](/change-verification).
+<Update label="Verify PRs in prod" description="Aug 16, 2026" tags={["Monitors"]}>
+  Every pull request on a connected repo gets a plan while the code is still in review: one review comment listing what the agent will watch once the change ships, and what would fail it. A temporary monitor checks those signals from deploy through a three-day soak, then reports the verdict — verified, regression, or inconclusive — on the same comment. A regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
 </Update>
 
 <Update label="Watched Slack channels" description="Aug 12, 2026" tags={["Slack"]}>
   Point the agent at a Slack channel and it reads every new message there without an @-mention, opening a thread on the ones that need attention. Turn it on from the integrations screen or with `@onepatch watch` in the channel. See [Watched channels](/incidents-and-slack#watched-channels).
+</Update>
+
+<Update label="Browser monitoring" description="Aug 12, 2026" tags={["Telemetry"]}>
+  Add `@onepatch/rum` to a frontend and page views, clicks, failed requests, and JS errors arrive as sessions, with each request joined to the backend trace it caused. See [Browser monitoring](/browser-monitoring).
 </Update>
 
 <Update label="Pull requests on the home page" description="Aug 11, 2026" tags={["App"]}>
