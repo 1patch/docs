@@ -4,7 +4,7 @@ description: What's new in OnePatch.
 ---
 
 <Update label="Verify PRs in prod" description="Aug 16, 2026" tags={["Monitors"]}>
-  Every pull request on a connected repo gets a plan while the code is still in review: one review comment listing what the agent will watch once the change ships, and what would fail it. A temporary monitor checks those signals from deploy through a three-day soak, then reports the verdict — verified, regression, or inconclusive — on the same comment. A regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
+  Merging a pull request no longer ends the story: the agent watches the change in production for three days and reports on the PR itself whether it held up — verified, regression, or inconclusive. The plan for what it will watch arrives as a review comment before merge, and a regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
 </Update>
 
 <Update label="Watched Slack channels" description="Aug 12, 2026" tags={["Slack"]}>
@@ -12,7 +12,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="Browser monitoring" description="Aug 12, 2026" tags={["Telemetry"]}>
-  Add `@onepatch/rum` to a frontend and page views, clicks, failed requests, and JS errors arrive as sessions, with each request joined to the backend trace it caused. See [Browser monitoring](/browser-monitoring).
+  When something breaks for a user, the agent can see what that user actually did — the pages, clicks, failed requests, and JS errors of their session, each joined to the backend trace it caused. Adding `@onepatch/rum` to the frontend is the whole setup. See [Browser monitoring](/browser-monitoring).
 </Update>
 
 <Update label="Pull requests on the home page" description="Aug 11, 2026" tags={["App"]}>
