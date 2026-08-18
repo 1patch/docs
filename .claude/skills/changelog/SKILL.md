@@ -43,6 +43,7 @@ Within that, order matters: the first clause says what the customer gets — the
 9. Plain subject-verb-object, and finish the sentence. No design-writer verbs — a table *lists*, it doesn't *sit*. And a verbless fragment ("Below that, every pull request across your repos.") only works when the elided verb carries over from the previous clause, which it usually doesn't.
 10. Don't name tunable defaults. "Watches for three days" freezes a config value into the announcement; describe what happens and leave the current setting to the guide, unless the number itself is the promise.
 11. Don't define by contrast with a past the reader never saw. "Without an @-mention" only lands for someone who knew the old requirement; a new reader learns nothing from the aside. Cut clauses whose only job is distinguishing from a prior mode.
+12. No flourish. "No longer ends the story," "is the whole setup," "just works" — beats a copywriter lands, and the reader hears the copywriter. The register is a teammate stating facts. If a clause exists for rhythm rather than information, cut it.
 
 ## The scoring rubric
 

@@ -4,7 +4,7 @@ description: What's new in OnePatch.
 ---
 
 <Update label="Verify PRs in prod" description="Aug 16, 2026" tags={["Monitors"]}>
-  Merging a pull request no longer ends the story: the agent watches the change in production and reports on the PR itself whether it held up. What it will watch arrives as a review comment before merge, and a regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
+  After a pull request merges, the agent watches the change in production and reports on the PR whether it held up. A review comment before merge says what it will watch, and a regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
 </Update>
 
 <Update label="Watched Slack channels" description="Aug 12, 2026" tags={["Slack"]}>
@@ -12,7 +12,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="Browser monitoring" description="Aug 12, 2026" tags={["Telemetry"]}>
-  When something breaks for a user, the agent can see what that user actually did — the pages, clicks, failed requests, and JS errors of their session, each joined to the backend trace it caused. Adding `@onepatch/rum` to the frontend is the whole setup. See [Browser monitoring](/browser-monitoring).
+  When something breaks for a user, the agent can see what that user actually did — the pages, clicks, failed requests, and JS errors of their session, each joined to the backend trace it caused. Setup is adding `@onepatch/rum` to the frontend. See [Browser monitoring](/browser-monitoring).
 </Update>
 
 <Update label="Pull requests on the home page" description="Aug 11, 2026" tags={["App"]}>
