@@ -28,6 +28,8 @@ Describe what the product does; don't assert what it's worth. A description is c
 
 So the agent's output is the subject of the sentence. Not us, and not the reader's obligations. Every rule below falls out of that.
 
+Within that, order matters: the first clause says what the customer gets — the outcome they can check — and the mechanism earns at most a clause after it. "The agent watches the change in production for three days and reports on the PR whether it held up" leads with the outcome; "a temporary monitor checks signals from deploy through a soak, then reports a verdict" is the same feature described from inside the machine. Choreography — which component posts, phase names, cadences, window lengths — is never the news; keep a mechanical term only when the reader needs it to use the feature. The test: cover everything after the first clause and ask whether a customer still knows why they'd care.
+
 ## The rules
 
 1. No announcement voice. Never "we're excited," "introducing," "say hello to."
@@ -57,6 +59,7 @@ Score every candidate entry before writing it, and every existing entry when aud
 Two failure modes the rubric is built to catch:
 
 - **Fixes to unseen breakage.** "Sign-out revokes the session," "switching no longer signs you out." To a reader these don't say *we improved* — they say *we shipped bugs*. Always a 1. This is especially dense in any period predating real customers.
+- **Reskins and rebuilds.** Score against what the customer could already do, not the size of the diff. A rebuilt page, a rename, or new chrome on an existing capability is a 2 however long it took to build.
 - **Infrastructure milestones as achievements.** A datastore migration, a provisioning speedup, a query cost cap. Real wins for us; the customer-facing residue is thinner than the entry. Either find the residue and write *that* ("queries run over much longer windows") or cut it.
 
 Also watch **fragmentation**: six dashboard entries in three months reads as a work log. Consolidate a run of small related changes into one entry that describes the resulting capability.
@@ -81,7 +84,7 @@ Changelog pages have **no table of contents**. Mintlify gives that right rail to
 ## Writing one
 
 1. **Find what actually shipped.** `git log --oneline` in the product repo; `git log --grep="(#123)$"` pins a PR's real ship date. Read the diff or the route file — don't write from the PR title, which is written for reviewers.
-2. **Verify the claim against the code at HEAD.** Entries go stale when a later PR changes the design. Check the current state, not the state when the feature landed.
+2. **Verify the claim against the code at HEAD.** Entries go stale when a later PR changes the design. Check the current state, not the state when the feature landed. Names drift too: take the feature's name from the current docs page title or UI copy, and when a linked guide was renamed, fix the older entries still pointing at the old path — a stale label is cosmetic, a stale link 404s.
 3. **Score it.** Below 3, stop — it doesn't go in.
 4. **Draft, then self-audit** with the greps below.
 5. **Publish and verify.**
