@@ -35,19 +35,23 @@
 
 :root {
   --op-paper: #f4f1ea;
+  --op-paper-bright: #fbf9f4;
   --op-ink: #171717;
   --op-ink-soft: #4a4744;
+  --op-ink-faint: #6b675f;
   --op-rule: #171717;
-  --op-rule-faint: #d5cfc1;
+  --op-rule-faint: #c9c5bd; /* = product --tone-25 */
   --op-accent: #e2502c;
 }
 
 .dark {
   --op-paper: #0a0a0b;
+  --op-paper-bright: #161617;
   --op-ink: #e9e8e3;
   --op-ink-soft: #ada9a0;
+  --op-ink-faint: #87837a;
   --op-rule: #99988f;
-  --op-rule-faint: #2b2b30;
+  --op-rule-faint: #2a2a2b; /* = product --tone-25 */
   --op-accent: #ef6235;
 }
 
@@ -58,13 +62,58 @@ button,
 select,
 textarea {
   font-family: "Monaspace Neon", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Honest glyphs — the product disables contextual alts and keeps stylistic
+   * sets on (client index.css). Mintlify ships Inter's cv02–cv11 features,
+   * which mean nothing to Monaspace; inherit ours instead. */
+  font-feature-settings: "ss01", "ss02", "calt" 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Monaspace Xenon", "Monaspace Neon", ui-monospace, monospace;
   letter-spacing: -0.01em;
+}
+
+/* ── Ink, not gray. Mintlify colors text from its neutral (blue-hued) gray
+ *    ramp — pure white body text in dark mode, oklch grays in light. Pin the
+ *    reading surface to the product's warm ink ramp: headings and strong at
+ *    full ink, prose one step down at ink-soft, same as the app. ── */
+#content-area h1,
+#content-area h2,
+#content-area h3,
+#content-area h4,
+#content-area strong {
+  color: var(--op-ink) !important;
+}
+#content-area h1,
+#content-area h2 {
+  font-weight: 700;
+}
+#content-area p,
+#content-area li,
+#content-area [data-as="p"] {
+  color: var(--op-ink-soft);
+}
+
+/* The product reads at 14px; Mintlify's 18px prose makes a monospace face
+ * shout. 16px (the app's --fs-md) reads comfortably without the boom. */
+#content-area :is(p, li, [data-as="p"]) {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Selection is the product's full invert — ink behind paper glyphs. */
+::selection {
+  background: var(--op-ink);
+  color: var(--op-paper);
+}
+
+/* Keyboard focus — the app's accent hairline, not a blue ring. */
+:focus-visible {
+  outline: 1px solid var(--op-accent);
+  outline-offset: 2px;
 }
 
 /* Code in Monaspace Krypton — the product's --font-code (more open code glyphs),
@@ -91,10 +140,10 @@ code, pre, kbd, samp {
  * padding and the code share one uniform surface in both themes. */
 .code-block {
   border: 1px solid var(--op-rule);
-  background-color: #efece3;
+  background-color: #fbf9f4;
 }
 .dark .code-block {
-  background-color: #15161a;
+  background-color: #161617;
 }
 .code-block > div,
 .code-block pre {
@@ -110,21 +159,21 @@ code, pre, kbd, samp {
  * color so they are clean opaque chips that still mask code scrolling under. */
 .code-block button {
   backdrop-filter: none !important;
-  background-color: #efece3 !important;
+  background-color: #fbf9f4 !important;
   border: 1px solid var(--op-rule) !important;
 }
 .dark .code-block button {
-  background-color: #15161a !important;
+  background-color: #161617 !important;
 }
 /* Icon in ink-soft so it reads against the panel, not the framework's faint gray. */
 .code-block button svg {
   color: var(--op-ink-soft) !important;
 }
 .code-block button:hover {
-  background-color: #e7e3d9 !important;
+  background-color: #efece3 !important;
 }
 .dark .code-block button:hover {
-  background-color: #20222a !important;
+  background-color: #202021 !important;
 }
 
 /* Behind the action buttons the framework lays a fade-mask div — a hardcoded
@@ -135,10 +184,10 @@ code, pre, kbd, samp {
  * The mask is the bare `print:hidden` div; the button row is the flex/absolute
  * sibling, excluded so its buttons keep their own chip background. */
 .code-block [class~="print:hidden"]:not(.flex):not(.absolute) {
-  background-image: linear-gradient(to right, rgba(239, 236, 227, 0) 0px, rgba(239, 236, 227, 1) 45px) !important;
+  background-image: linear-gradient(to right, rgba(251, 249, 244, 0) 0px, rgba(251, 249, 244, 1) 45px) !important;
 }
 .dark .code-block [class~="print:hidden"]:not(.flex):not(.absolute) {
-  background-image: linear-gradient(to right, rgba(21, 22, 26, 0) 0px, rgba(21, 22, 26, 1) 45px) !important;
+  background-image: linear-gradient(to right, rgba(22, 22, 23, 0) 0px, rgba(22, 22, 23, 1) 45px) !important;
 }
 
 /* Nav rails are dashed, matching the product's dashed left rail (the chat
@@ -154,11 +203,7 @@ code, pre, kbd, samp {
 }
 #sidebar a[class*="border-l"]:not([aria-current="page"]),
 #table-of-contents-content a[class*="border-l"]:not([aria-current="page"]) {
-  border-left-color: #8a867f !important;
-}
-.dark #sidebar a[class*="border-l"]:not([aria-current="page"]),
-.dark #table-of-contents-content a[class*="border-l"]:not([aria-current="page"]) {
-  border-left-color: #6f6c64 !important;
+  border-left-color: var(--op-ink-faint) !important;
 }
 /* The rail is a stacked per-link border, so each segment restarts the dash
  * pattern at its own top edge and CSS has no border-dash-offset to align them.
@@ -175,6 +220,81 @@ code, pre, kbd, samp {
 /* Links and inline accents track the brand vermillion. */
 a {
   text-underline-offset: 2px;
+}
+
+/* ── Callouts. Mintlify paints <Note> from Tailwind's blue scale — the one
+ *    blue on an otherwise warm page. The product keeps status surfaces mono
+ *    (paper-bright panel, 1px rule, ink text; client index.css: "success /
+ *    warning surfaces stay mono") and reserves color for the accent and the
+ *    pinned error red. Re-skin every callout to the mono panel; Warning and
+ *    Danger get the product's --error, the only pinned hue besides paper/ink. */
+.callout {
+  background-color: var(--op-paper-bright) !important;
+  border-color: var(--op-rule) !important;
+}
+.callout,
+.callout :is(p, div, span, li) {
+  color: var(--op-ink-soft) !important;
+}
+.callout svg {
+  color: var(--op-ink-soft) !important;
+  fill: var(--op-ink-soft);
+}
+/* Warning/Danger ride the pinned error red (product --error), never the
+ * accent — a cobalt or lichen "warning" would read as info, not alarm. */
+.callout[class*="amber"],
+.callout[class*="red"],
+.callout[class*="warning"],
+.callout[class*="danger"] {
+  border-color: #cc2e1a !important;
+}
+.callout[class*="amber"] svg,
+.callout[class*="red"] svg {
+  color: #cc2e1a !important;
+  fill: #cc2e1a;
+}
+.dark .callout[class*="amber"],
+.dark .callout[class*="red"],
+.dark .callout[class*="warning"],
+.dark .callout[class*="danger"] {
+  border-color: #f0492e !important;
+}
+.dark .callout[class*="amber"] svg,
+.dark .callout[class*="red"] svg {
+  color: #f0492e !important;
+  fill: #f0492e;
+}
+
+/* ── Steps. Mintlify's number chip is a gray circle on a solid gray rail —
+ *    both off-language. The product's markers are square tiles with a 1px
+ *    rule (--tile-h is 26px; Mintlify's size-7 is 28 — close enough to keep),
+ *    and every rail in the product is dashed ink-faint (chat tool-group rail,
+ *    sidebar tree). data-component-part hooks are Mintlify's own stable
+ *    names for these nodes. */
+[data-component-part="step-number"] > div {
+  border-radius: 0 !important;
+  background-color: var(--op-paper-bright) !important;
+  border: 1px solid var(--op-rule);
+  color: var(--op-ink) !important;
+  font-family: "Monaspace Neon", ui-monospace, monospace;
+}
+[data-component-part="step-line"] {
+  width: 0 !important;
+  background: none !important;
+  border-left: 1px dashed var(--op-ink-faint);
+}
+
+/* ── Cards. Mintlify borders cards with a translucent gray and floats them on
+ *    the page background. Product cards are paper-bright panels behind a full
+ *    1px ink rule (--border: 1px solid var(--ink)) — the same one-panel-one-
+ *    rule depth as the code blocks above. Hover stays quiet: the rule is
+ *    already ink, so the accent moves to the title like a link. */
+.card {
+  background-color: var(--op-paper-bright) !important;
+  border-color: var(--op-rule) !important;
+}
+#content-area .card:hover :is(h2, h3) {
+  color: var(--op-accent) !important;
 }
 
 /* Nav logo mark — match blog header at 26px. */
