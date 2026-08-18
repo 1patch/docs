@@ -28,7 +28,7 @@ Describe what the product does; don't assert what it's worth. A description is c
 
 So the agent's output is the subject of the sentence. Not us, and not the reader's obligations. Every rule below falls out of that.
 
-Within that, order matters: the first clause says what the customer gets — the outcome they can check — and the mechanism earns at most a clause after it. "The agent watches the change in production for three days and reports on the PR whether it held up" leads with the outcome; "a temporary monitor checks signals from deploy through a soak, then reports a verdict" is the same feature described from inside the machine. Choreography — which component posts, phase names, cadences, window lengths — is never the news; keep a mechanical term only when the reader needs it to use the feature. The test: cover everything after the first clause and ask whether a customer still knows why they'd care.
+Within that, order matters: the first clause says what the customer gets — the outcome they can check — and the mechanism earns at most a clause after it. "The agent watches the change in production for three days and reports on the PR whether it held up" leads with the outcome; "a temporary monitor checks signals from deploy through a soak, then reports a verdict" is the same feature described from inside the machine. Choreography — which component posts, phase names, status vocabularies, cadences, window lengths — is never the news; keep a mechanical term only when the reader needs it to use the feature. The test: cover everything after the first clause and ask whether a customer still knows why they'd care.
 
 ## The rules
 
