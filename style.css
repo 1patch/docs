@@ -263,10 +263,11 @@ img.nav-logo {
  * ────────────────────────────────────────────────────────────────────────── */
 
 /* Scoped with :has() so it only touches pages actually built from <Update>.
- * The two-column entry layout needs more measure than a prose page — but only
- * once there's room for two columns. Below xl, Mintlify stacks the rail above
- * the body and its own narrower prose measure is the right one, so leave it. */
-@media (min-width: 1280px) {
+ * The two-column entry layout needs more measure than a prose page, and
+ * Mintlify goes two-column at lg (1024px) — this must match, or the window
+ * between the breakpoints squeezes the body beside a full-width rail. Below
+ * lg the rail stacks above the body and the prose measure is right as is. */
+@media (min-width: 1024px) {
   #content-area:has(.update-container) {
     max-width: 52rem;
   }
