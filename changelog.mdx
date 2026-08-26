@@ -3,6 +3,30 @@ title: Changelog
 description: What's new in OnePatch.
 ---
 
+<Update label="Workspace search" description="Aug 25, 2026" tags={["App"]}>
+  ⌘K finds anything in the workspace — chats and their full transcripts, incidents, monitors, and dashboards. The agent searches the same index, so a new incident starts with a look through past ones.
+</Update>
+
+<Update label="On-call paging" description="Aug 24, 2026" tags={["Incidents"]}>
+  When an incident needs a human, the agent texts the on-call phone, and escalates to a voice call if the text goes unanswered. Set one number or a daily or weekly rotation on the Integrations page — monitor alerts stay in Slack.
+</Update>
+
+<Update label="Agent internet access" description="Aug 20, 2026" tags={["Platform"]}>
+  A workspace setting lists the domains the agent may reach, each entry covering its subdomains; leave it empty to allow the open web. GitHub, the Anthropic API, and telemetry ingest are always reachable.
+</Update>
+
+<Update label="Pay-as-you-go pricing" description="Aug 19, 2026" tags={["Pricing"]}>
+  $5 per monitored pull request when it merges and $50 per incident resolved, invoiced monthly, net 30. Open pull requests are free.
+</Update>
+
+<Update label="The agent instruments your repo" description="Aug 19, 2026" tags={["Agent"]}>
+  During onboarding the agent detects your runtime and opens a pull request that wires OpenTelemetry to your workspace. Merge it and signals start flowing; existing telemetry is added to, never repointed.
+</Update>
+
+<Update label="Incident pages" description="Aug 17, 2026" tags={["Incidents"]}>
+  Every incident gets a number and its own page: severity, impact, affected components, the monitor's history, and a timeline the agent keeps as it works, with the incident chat beside it. `/incident/104` is a link you can put in a postmortem.
+</Update>
+
 <Update label="Verify PRs in prod" description="Aug 16, 2026" tags={["Monitors"]}>
   After a pull request merges, the agent watches the change in production and reports on the PR whether it held up. A review comment before merge says what it will watch, and a regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod).
 </Update>
