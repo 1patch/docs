@@ -15,9 +15,7 @@ npm install -g onepatch
 onepatch install
 ```
 
-`onepatch install` detects Claude Code, Codex, and Cursor and gives each one the OnePatch plugin: the MCP server, a skill that teaches the agent when to use it, and, in Claude Code and Codex, a hook that adds a one-line summary of open incidents to each prompt. Re-run it any time to repair or upgrade, or pass an agent name to target one, as in `onepatch install cursor`.
-
-Each plugin can also be installed by hand.
+`onepatch install` detects Claude Code, Codex, and Cursor and installs the OnePatch plugin in each. Pass an agent name to set up only one, as in `onepatch install cursor`. Each plugin can also be installed by hand.
 
 <CodeGroup>
 
@@ -45,8 +43,6 @@ url = "https://app.onepatch.dev/mcp"
 ```
 
 The first call opens an OAuth sign-in with your OnePatch account. In Claude Code, run `/mcp` to sign in. In Codex, run `codex mcp login onepatch`. In Cursor, sign in under Settings, MCP.
-
-Plugins stay current on their own. Claude Code and Cursor refresh their marketplaces, and the CLI checks npm once a day and reinstalls itself in the background.
 
 ## 2. Other MCP clients
 
