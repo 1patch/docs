@@ -1,12 +1,14 @@
 ---
 title: Connect your coding agent
 sidebarTitle: Coding agents
-description: Install the OnePatch plugin in Claude Code, Codex, or Cursor to query telemetry and read incidents from your editor.
+description: Install the OnePatch plugin in Claude Code, Codex, or Cursor, or point any MCP client at the OnePatch MCP server.
 ---
 
-The OnePatch plugin connects Claude Code, Codex, or Cursor to your workspace. The agent can query your telemetry with SQL, read the OnePatch agent's incident investigations, and start or reply to workspace chats. Everything is scoped to your organization. The only writes are starting a chat and replying to one.
+Connect a coding agent to your workspace and it can query your telemetry with SQL, read the OnePatch agent's incident investigations, and start or reply to workspace chats. Everything is scoped to your organization. The only writes are starting a chat and replying to one.
 
-## Install
+Claude Code, Codex, and Cursor get a plugin. Everything else connects to the [MCP server](/mcp-server) directly.
+
+## Install the plugin
 
 The `onepatch` CLI wires every coding agent on your machine in one step.
 
@@ -48,10 +50,43 @@ Codex also needs the MCP server in `~/.codex/config.toml`:
 url = "https://app.onepatch.dev/mcp"
 ```
 
-## Sign in
-
 The first call opens an OAuth sign-in with your OnePatch account. In Claude Code, run `/mcp` to sign in. In Codex, run `codex mcp login onepatch`. In Cursor, sign in under Settings, MCP.
 
-## Other clients
+## Other MCP clients
 
-The plugin is a thin layer over the OnePatch MCP server. Any other MCP client, a script, or a CI job can connect to it directly. See [MCP](/mcp-server) for the endpoint, headless access with API keys, and the list of tools.
+Any MCP client that speaks streamable HTTP can connect without a plugin.
+
+<CodeGroup>
+
+```json VS Code
+{
+  "servers": {
+    "onepatch": {
+      "type": "http",
+      "url": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```json Windsurf
+{
+  "mcpServers": {
+    "onepatch": {
+      "serverUrl": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```text Any MCP client
+Transport:  HTTP (streamable)
+URL:        https://app.onepatch.dev/mcp
+Auth:       OAuth, sign in with your OnePatch account
+```
+
+</CodeGroup>
+
+Config files: `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing. The first call opens an OAuth sign-in with your OnePatch account.
+
+For a script, CI job, or unattended agent that can't open a browser, use an API key. See [MCP server](/mcp-server#api-keys).
