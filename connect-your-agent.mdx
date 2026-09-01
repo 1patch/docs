@@ -1,7 +1,7 @@
 ---
 title: Connect your coding agent
-sidebarTitle: Coding agents & CLI
-description: Install the OnePatch plugin in Claude Code, Codex, or Cursor, or use the onepatch CLI, to query telemetry and read incidents from your editor.
+sidebarTitle: Coding agents
+description: Install the OnePatch plugin in Claude Code, Codex, or Cursor to query telemetry and read incidents from your editor.
 ---
 
 Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`. Connect a coding agent to it and the agent can query your telemetry with SQL, read the OnePatch agent's incident investigations, and start or reply to workspace chats. Everything is scoped to your organization. The only writes are starting a chat and replying to one.
@@ -81,22 +81,7 @@ Auth:       OAuth, sign in with your OnePatch account
 
 Config files: `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing.
 
-## 3. The CLI
-
-The same tools from a terminal. `onepatch login` signs in with a device code and stores credentials under `~/.config/onepatch/`.
-
-```sh
-onepatch login
-onepatch otel query "SELECT count() FROM otel.logs WHERE ts > now() - INTERVAL 1 HOUR"
-onepatch incidents list --scope open
-onepatch incidents read 42
-onepatch chats start "why is checkout slow?"
-onepatch chats reply <id> "focus on the EU region"
-```
-
-Pass `-` to read SQL or message text from stdin. `--json` prints raw MCP content blocks. `onepatch --help` lists every command.
-
-## 4. Headless access (API keys)
+## 3. Headless access (API keys)
 
 OAuth needs a browser. For a script, CI job, or unattended agent, use an API key: an org admin creates one on the **Integrations** page under **API keys**. You get a `client_id` / `client_secret` pair, and the secret is shown once. The pair doesn't expire; your code exchanges it for a 1-hour access token and sends that as the MCP bearer:
 
@@ -120,7 +105,7 @@ Any MCP client that can send a static `Authorization` header works the same way.
 
 Each key is bound to one organization; its tokens can't read another customer's data. **Rotate** issues a new secret while the old one keeps working. Once the new secret is deployed, **Retire old secret** deletes the old one. **Revoke** deletes the key and every secret on it.
 
-## 5. Tools
+## 4. Tools
 
 | Tool | What it does |
 | --- | --- |
