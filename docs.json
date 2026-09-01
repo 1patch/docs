@@ -41,7 +41,8 @@
               "incidents-and-slack",
               "browser-monitoring",
               "connect-aws",
-              "connect-your-agent"
+              "connect-your-agent",
+              "mcp-server"
             ]
           },
           {
