@@ -43,6 +43,12 @@
               "connect-aws",
               "connect-your-agent"
             ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "network-allowlist"
+            ]
           }
         ]
       },
