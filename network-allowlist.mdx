@@ -1,34 +1,10 @@
 ---
 title: Network allowlist
-description: Limit which internet domains the OnePatch agent can reach while it works.
+description: Limit which domains the OnePatch agent can reach.
 ---
 
-The agent can use the internet while it investigates: fetch a runbook, read a vendor status page, call an API you point it at. By default it can reach any domain. The network allowlist narrows that to domains you name.
+By default the agent can reach any domain. To restrict it, go to **Settings › Networking** and enter domains under **Agent internet access**, one per line. Each entry also covers its subdomains. Leave the field empty to allow everything.
 
-## Set the allowlist
+GitHub, the Anthropic API, and your OnePatch telemetry endpoint are always reachable.
 
-An org admin sets it under **Settings › Networking**, in the **Agent internet access** field. Enter one domain per line and save.
-
-```text
-npmjs.org
-stripe.com
-docs.datadoghq.com
-```
-
-Each entry allows the domain itself and every subdomain under it. `stripe.com` covers `api.stripe.com` and `dashboard.stripe.com`. There is no wildcard syntax; `*.stripe.com` is accepted and treated the same as `stripe.com`.
-
-Pasted URLs are cleaned up on save. Schemes, paths, and trailing dots are dropped, and case is ignored. An entry that is not a domain, such as an IP address or a host with a port, is rejected with an inline message and nothing is saved until it is fixed. The list holds up to 100 domains.
-
-Changes take effect within a few minutes. Clear the field to return to open internet access.
-
-## Always reachable
-
-Some destinations stay open regardless of the list, because the agent cannot function without them:
-
-- GitHub, limited to the repositories you connected
-- The Anthropic API
-- Your workspace's OnePatch telemetry endpoint
-
-## What a blocked request looks like
-
-When the agent tries a domain outside the list, the connection is refused and the failure appears in its tool output. The agent works around it or asks you to add the domain. A tight list can slow an investigation down, but it never breaks incident handling.
+Changes apply within a few minutes.
