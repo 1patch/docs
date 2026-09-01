@@ -1,0 +1,103 @@
+---
+title: Connect OnePatch to your agent
+sidebarTitle: MCP
+description: Add the OnePatch MCP server to any MCP client to query telemetry and read incident investigations, with OAuth or an API key.
+---
+
+Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`. Connect it to any MCP client to query your telemetry with SQL, read the OnePatch agent's incident investigations, and start or reply to workspace chats. Everything is scoped to your organization. The only writes are starting a chat and replying to one.
+
+Using Claude Code, Codex, or Cursor? Install the [OnePatch plugin](/connect-your-agent) instead. It configures the MCP server for you and teaches the agent when to use it.
+
+## Install
+
+Any MCP client that speaks streamable HTTP can connect.
+
+<CodeGroup>
+
+```sh Claude Code
+claude mcp add --transport http onepatch https://app.onepatch.dev/mcp
+```
+
+```json Cursor
+{
+  "mcpServers": {
+    "onepatch": {
+      "url": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```json VS Code
+{
+  "servers": {
+    "onepatch": {
+      "type": "http",
+      "url": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```json Windsurf
+{
+  "mcpServers": {
+    "onepatch": {
+      "serverUrl": "https://app.onepatch.dev/mcp"
+    }
+  }
+}
+```
+
+```text Any MCP client
+Transport:  HTTP (streamable)
+URL:        https://app.onepatch.dev/mcp
+Auth:       OAuth, sign in with your OnePatch account
+```
+
+</CodeGroup>
+
+Config files: `.cursor/mcp.json` (Cursor), `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing.
+
+The first call opens an OAuth sign-in with your OnePatch account.
+
+## Headless access (API keys)
+
+OAuth needs a browser. For a script, CI job, or unattended agent, use an API key: an org admin creates one on the **Integrations** page under **API keys**. You get a `client_id` / `client_secret` pair, and the secret is shown once. The pair doesn't expire; your code exchanges it for a 1-hour access token and sends that as the MCP bearer:
+
+```sh
+# 1. Exchange your key for a 1-hour access token
+TOKEN=$(curl -s -X POST https://auth.onepatch.dev/oauth2/token \
+  -d grant_type=client_credentials \
+  -d client_id=$ONEPATCH_CLIENT_ID \
+  --data-urlencode "client_secret=$ONEPATCH_CLIENT_SECRET" \
+  | jq -r .access_token)
+
+# 2. Call the MCP endpoint with it
+curl -s -X POST https://app.onepatch.dev/mcp \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+Any MCP client that can send a static `Authorization` header works the same way.
+
+Each key is bound to one organization; its tokens can't read another customer's data. **Rotate** issues a new secret while the old one keeps working. Once the new secret is deployed, **Retire old secret** deletes the old one. **Revoke** deletes the key and every secret on it.
+
+## Tools
+
+| Tool | What it does |
+| --- | --- |
+| `query_otel` | Read-only SQL over your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
+| `get_ingest_config` | The OTLP endpoint and token for sending telemetry. |
+| `list_incidents` | List incidents, filtered by status, severity, or who they wait on. |
+| `read_incident` | Read one incident's document and the investigation behind it. |
+| `list_chats` | List the chats in your workspace. |
+| `read_chat` | Read one chat's transcript. |
+| `start_chat` | Ask the OnePatch agent to investigate something. |
+| `send_chat_reply` | Post a reply into one of your chats. |
+
+## Bring your own MCP servers
+
+The connection also runs the other way: on the **Integrations** page you can add your own MCP servers, and the OnePatch agent gets their tools in every chat.
