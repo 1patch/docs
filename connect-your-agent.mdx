@@ -1,28 +1,58 @@
 ---
-title: Connect OnePatch to your agent
-sidebarTitle: MCP
-description: Add the OnePatch MCP server to your coding agent to query telemetry and read incident investigations from your editor.
+title: Connect your coding agent
+sidebarTitle: Coding agents & CLI
+description: Install the OnePatch plugin in Claude Code, Codex, or Cursor, or use the onepatch CLI, to query telemetry and read incidents from your editor.
 ---
 
-Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`. Connect it to your coding agent to query your telemetry with SQL, read the OnePatch agent's incident investigations, and read or reply to workspace chats. Everything is scoped to your organization; the only write is replying into your own chats.
+Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`. Connect a coding agent to it and the agent can query your telemetry with SQL, read the OnePatch agent's incident investigations, and start or reply to workspace chats. Everything is scoped to your organization. The only writes are starting a chat and replying to one.
 
-## Install
+## 1. Install the plugin
+
+The `onepatch` CLI wires every coding agent on your machine in one step. It needs [Bun](https://bun.sh).
+
+```sh
+npm install -g onepatch
+onepatch install
+```
+
+`onepatch install` detects Claude Code, Codex, and Cursor and gives each one the OnePatch plugin: the MCP server, a skill that teaches the agent when to use it, and, in Claude Code and Codex, a hook that adds a one-line summary of open incidents to each prompt. Re-run it any time to repair or upgrade, or pass an agent name to target one, as in `onepatch install cursor`.
+
+Each plugin can also be installed by hand.
 
 <CodeGroup>
 
 ```sh Claude Code
-claude mcp add --transport http onepatch https://app.onepatch.dev/mcp
+claude plugin marketplace add 1patch/claude-code-plugin
+claude plugin install onepatch@onepatch
 ```
 
-```json Cursor
-{
-  "mcpServers": {
-    "onepatch": {
-      "url": "https://app.onepatch.dev/mcp"
-    }
-  }
-}
+```sh Codex
+codex plugin marketplace add 1patch/codex-plugin
+codex plugin install onepatch/onepatch
 ```
+
+```text Cursor
+/add-plugin https://github.com/1patch/cursor-plugin
+```
+
+</CodeGroup>
+
+Codex also needs the MCP server in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.onepatch]
+url = "https://app.onepatch.dev/mcp"
+```
+
+The first call opens an OAuth sign-in with your OnePatch account. In Claude Code, run `/mcp` to sign in. In Codex, run `codex mcp login onepatch`. In Cursor, sign in under Settings, MCP.
+
+Plugins stay current on their own. Claude Code and Cursor refresh their marketplaces, and the CLI checks npm once a day and reinstalls itself in the background.
+
+## 2. Other MCP clients
+
+Any MCP client that speaks streamable HTTP can connect without a plugin.
+
+<CodeGroup>
 
 ```json VS Code
 {
@@ -48,18 +78,31 @@ claude mcp add --transport http onepatch https://app.onepatch.dev/mcp
 ```text Any MCP client
 Transport:  HTTP (streamable)
 URL:        https://app.onepatch.dev/mcp
-Auth:       OAuth — sign in with your OnePatch account
+Auth:       OAuth, sign in with your OnePatch account
 ```
 
 </CodeGroup>
 
-Config files: `.cursor/mcp.json` (Cursor), `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing.
+Config files: `.vscode/mcp.json` (VS Code), `~/.codeium/windsurf/mcp_config.json` (Windsurf). Reload the window after editing.
 
-The first call opens an OAuth sign-in with your OnePatch account.
+## 3. The CLI
 
-## Headless access (API keys)
+The same tools from a terminal. `onepatch login` signs in with a device code and stores credentials under `~/.config/onepatch/`.
 
-OAuth needs a browser. For a script, CI job, or unattended agent, use an API key: an org admin creates one on the **Integrations** page under **API keys**. You get a `client_id` / `client_secret` pair — the secret is shown once. The pair doesn't expire; your code exchanges it for a 1-hour access token and sends that as the MCP bearer:
+```sh
+onepatch login
+onepatch otel query "SELECT count() FROM otel.logs WHERE ts > now() - INTERVAL 1 HOUR"
+onepatch incidents list --scope open
+onepatch incidents read 42
+onepatch chats start "why is checkout slow?"
+onepatch chats reply <id> "focus on the EU region"
+```
+
+Pass `-` to read SQL or message text from stdin. `--json` prints raw MCP content blocks. `onepatch --help` lists every command.
+
+## 4. Headless access (API keys)
+
+OAuth needs a browser. For a script, CI job, or unattended agent, use an API key: an org admin creates one on the **Integrations** page under **API keys**. You get a `client_id` / `client_secret` pair, and the secret is shown once. The pair doesn't expire; your code exchanges it for a 1-hour access token and sends that as the MCP bearer:
 
 ```sh
 # 1. Exchange your key for a 1-hour access token
@@ -81,13 +124,17 @@ Any MCP client that can send a static `Authorization` header works the same way.
 
 Each key is bound to one organization; its tokens can't read another customer's data. **Rotate** issues a new secret while the old one keeps working. Once the new secret is deployed, **Retire old secret** deletes the old one. **Revoke** deletes the key and every secret on it.
 
-## Tools
+## 5. Tools
 
 | Tool | What it does |
 | --- | --- |
 | `query_otel` | Read-only SQL over your telemetry (`otel.spans`, `otel.metrics`, `otel.logs`). |
+| `get_ingest_config` | The OTLP endpoint and token for sending telemetry. |
+| `list_incidents` | List incidents, filtered by status, severity, or who they wait on. |
+| `read_incident` | Read one incident's document and the investigation behind it. |
 | `list_chats` | List the chats in your workspace. |
-| `read_chat` | Read one chat's full transcript. |
+| `read_chat` | Read one chat's transcript. |
+| `start_chat` | Ask the OnePatch agent to investigate something. |
 | `send_chat_reply` | Post a reply into one of your chats. |
 
 The connection also runs the other way: on the **Integrations** page you can add your own MCP servers, and the OnePatch agent gets their tools in every chat.
