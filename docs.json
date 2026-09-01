@@ -41,13 +41,13 @@
               "incidents-and-slack",
               "browser-monitoring",
               "connect-aws",
-              "connect-your-agent",
-              "mcp-server"
+              "connect-your-agent"
             ]
           },
           {
             "group": "Reference",
             "pages": [
+              "mcp-server",
               "network-allowlist"
             ]
           }
