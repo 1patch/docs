@@ -8,11 +8,17 @@ Your OnePatch workspace exposes an MCP server at `https://app.onepatch.dev/mcp`.
 
 ## 1. Install the plugin
 
-The `onepatch` CLI wires every coding agent on your machine in one step. It needs [Bun](https://bun.sh).
+The `onepatch` CLI wires every coding agent on your machine in one step.
 
 ```sh
 npm install -g onepatch
 onepatch install
+```
+
+Without Node, install the standalone binary instead:
+
+```sh
+curl -fsSL https://releases.onepatch.dev/install.sh | sh
 ```
 
 `onepatch install` detects Claude Code, Codex, and Cursor and installs the OnePatch plugin in each. Pass an agent name to set up only one, as in `onepatch install cursor`. Each plugin can also be installed by hand.
