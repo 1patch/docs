@@ -34,24 +34,29 @@
             ]
           },
           {
-            "group": "Guides",
+            "group": "Using OnePatch",
             "pages": [
-              "agent-instructions",
               "services",
               "monitors-and-dashboards",
-              "email-monitors",
-              "verify-prs-in-prod",
               "incidents-and-slack",
-              "browser-monitoring",
-              "connect-aws",
-              "connect-linear",
-              "connect-your-agent"
+              "verify-prs-in-prod"
             ]
           },
           {
-            "group": "Reference",
+            "group": "Integrations",
             "pages": [
-              "mcp-server",
+              "browser-monitoring",
+              "email-monitors",
+              "connect-aws",
+              "connect-linear",
+              "connect-your-agent",
+              "mcp-server"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "agent-instructions",
               "network-allowlist"
             ]
           }
