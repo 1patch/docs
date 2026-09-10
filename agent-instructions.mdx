@@ -1,0 +1,21 @@
+---
+title: Agent instructions
+description: Give the agent your team's production context and rules for taking action.
+---
+
+An organization admin can set workspace-wide instructions in **Settings → Agent**. Enter your instructions and click **Save**. They apply to new agent sessions; existing sessions keep the instructions they started with.
+
+Use short, specific statements about things the agent should know or do:
+
+```text
+Production runs in eu-west-1; us-east-1 is staging.
+Our checkout API is called “storefront” in customer-facing updates.
+Ask for approval before restarting the payments service.
+Include a rollback plan in pull requests that change database schemas.
+```
+
+Instructions guide the agent's behavior. Access is controlled by the permissions on your connected tools, such as your [AWS role](/connect-aws) and [network allowlist](/network-allowlist).
+
+## Memory across chats
+
+The agent also keeps workspace-wide memory of what it learns, so later chats can build on earlier investigations. Use instructions for explicit team rules and conventions. If remembered context is wrong or outdated, tell the agent in chat.

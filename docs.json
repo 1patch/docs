@@ -36,11 +36,15 @@
           {
             "group": "Guides",
             "pages": [
+              "agent-instructions",
+              "services",
               "monitors-and-dashboards",
+              "email-monitors",
               "verify-prs-in-prod",
               "incidents-and-slack",
               "browser-monitoring",
               "connect-aws",
+              "connect-linear",
               "connect-your-agent"
             ]
           },

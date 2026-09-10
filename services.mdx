@@ -1,0 +1,25 @@
+---
+title: Services
+description: Find a service's health, monitors, dashboards, and dependencies in one place.
+---
+
+The **Services** page shows the agent's map of your system. Each service links to its monitors and dashboards, and the dependency graph shows what calls it and what it depends on, including external services.
+
+## Read service health
+
+Health comes from the service's monitors: a firing monitor makes the service firing, and a check that cannot determine its state makes health unknown unless another monitor is firing. A service without evaluated, active monitors is unmonitored.
+
+A healthy status describes the checks attached to that service; it does not mean every possible failure is covered. Open a monitor to inspect what it watches.
+
+## Update the map
+
+The agent maintains the map from your repositories and telemetry. Ask it to correct missing services, dependencies, or monitor assignments:
+
+```text
+The checkout API depends on Stripe. Add that dependency and show
+which monitors cover checkout.
+```
+
+```text
+Add the queue-lag monitor and the worker dashboard to the payments worker.
+```

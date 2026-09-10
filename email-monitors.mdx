@@ -1,0 +1,31 @@
+---
+title: Monitor email alerts
+description: Turn alert emails from another system into OnePatch investigations.
+---
+
+OnePatch can monitor alerts from any system that sends email. The agent creates an address for each monitor; incoming messages become telemetry it can query alongside your traces, metrics, and logs.
+
+## Set up
+
+Tell the agent which source to watch and what should count as an alarm:
+
+```text
+Create an unarmed email monitor for our CloudWatch checkout alarms.
+Give me an address to subscribe to the SNS topic. Treat ALARM messages
+as alerts, ignore subscription confirmations, and recognize OK messages
+as recovery.
+```
+
+The agent returns an address and creates the monitor. Add the address as a recipient in the source system, or forward its alerts there. If the source sends a subscription confirmation, ask the agent to check for it and help complete the subscription.
+
+Send a test alert, then ask:
+
+```text
+Did the test email arrive, and did the checkout monitor recognize it?
+```
+
+An **armed** monitor opens an incident when its condition fires. Ask the agent to arm it when you want automatic investigation, or leave it unarmed to record firings only. See [Monitors and dashboards](/monitors-and-dashboards#arming-a-monitor).
+
+## Change or stop it
+
+Ask the agent to change which messages trigger the monitor, retrieve its address, or revoke the address. Mail sent to a revoked address is dropped.

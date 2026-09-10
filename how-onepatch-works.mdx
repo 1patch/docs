@@ -1,33 +1,32 @@
 ---
 title: How OnePatch works
-description: Telemetry in, an agent over your data, monitors and dashboards out.
+description: How OnePatch uses your telemetry and code to investigate problems and verify fixes.
 ---
 
-OnePatch has three parts: the telemetry you send, the agent that reads it, and the monitors and dashboards the agent produces.
-
-## Telemetry in
-
-Your application sends OpenTelemetry — traces, metrics, and logs — to your workspace's ingest endpoint. You point your exporter at it once; OnePatch stores every signal and makes it queryable. This is the only manual setup. See [Getting started](/getting-started).
+OnePatch is an AI SRE for your workspace. It reads your telemetry and code, builds monitors and dashboards, investigates problems, and proposes fixes. You can work with it in the app, in Slack, or through your coding agent.
 
 ## The agent over your data
 
-Your workspace runs an AI **agent** with read access to your telemetry and the repositories you connect. You interact with it in chat — the single interface to the product. Ask a question and the agent queries your telemetry and answers from the data. Ask it to watch or visualize something and it builds the monitor or dashboard.
+Send OpenTelemetry traces, metrics, and logs, and connect your GitHub repositories. The agent uses both to understand how your system works. [Getting started](/getting-started) covers setup.
 
-The agent can also use tools that aren't OnePatch's. On the **Integrations** page you can add your own MCP servers, and the agent gets their tools in every chat.
+Connect [AWS](/connect-aws), [Linear](/connect-linear), or your own MCP servers from **Integrations** to give it more tools. Set [agent instructions](/agent-instructions) for team conventions and rules for taking action. The agent also carries learned context across chats through workspace-wide memory.
 
-## Monitors and dashboards out
+## Ask it to investigate or watch something
 
-The agent produces two things that outlive any chat:
+Ask a question in chat, such as “Why did checkout latency rise after the last deploy?” The agent queries the data and reads the code to investigate.
 
-- A **dashboard** is a live view of your telemetry.
-- A **monitor** watches your telemetry and reports `healthy`, `firing`, or `unknown`.
+For ongoing visibility, ask it to build a [dashboard or monitor](/monitors-and-dashboards). Dashboards show live telemetry; monitors run scheduled checks. Monitors can also watch [email alerts](/email-monitors) from other systems. The [Services](/services) page brings together each service's health, monitors, dashboards, and dependencies.
 
-Both are live as soon as the agent finishes writing them. [Monitors and dashboards](/monitors-and-dashboards) covers both in detail.
+## Follow an investigation
 
-## When something breaks
+An armed monitor that fires opens an incident. The agent investigates, records its findings with links to evidence, and works toward a resolution. It can tune a false alarm, open a fix PR, or ask for a decision or action it needs from you.
 
-A monitor can be **armed**. When an armed monitor fires, OnePatch opens an incident and the agent triages it: it investigates the firing, then tunes the monitor if it was a false alarm or opens a pull request if the problem is real. Notifications land in your `#onepatch-alerts` Slack channel. See [Incidents and Slack](/incidents-and-slack).
+Related incidents can be merged into one episode. A monitor recovering prompts the agent to reassess; it does not close the incident automatically. You can follow the report or reply in the incident's chat. See [Incidents and Slack](/incidents-and-slack).
 
-## When you ship
+## Verify what ships
 
-Every pull request on a connected repository gets a verification plan — checks against your telemetry for what the change should and should not do — posted as one review on the pull request. After it merges and deploys, the checks run through a soak; a regression opens an incident, and a clean result is one edited line on the pull request. See [Change verification](/change-verification).
+For runtime changes in connected repositories, the agent writes a verification plan on the pull request. After merge and deployment, it checks production against that plan and reports the result on the PR. A regression opens an incident. See [Verify PRs in prod](/verify-prs-in-prod) for deploy setup and coverage.
+
+## Work from your existing tools
+
+[Slack](/incidents-and-slack#talking-to-the-agent-from-slack) supports direct messages, mentions, incident replies, and watched channels. [Coding-agent plugins](/connect-your-agent) let your editor query telemetry, read investigations, and hand work to OnePatch. These all use the same workspace context.
