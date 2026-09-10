@@ -1,6 +1,6 @@
 ---
 title: Incidents and Slack
-description: What happens when a monitor fires.
+description: Follow investigations, inspect evidence, and work with the agent in Slack.
 ---
 
 What happens when a monitor fires depends on whether it is armed.
@@ -14,7 +14,7 @@ When an unarmed monitor fires, OnePatch records the firing — its state, reason
 When an armed monitor fires, OnePatch opens an **incident** and the agent triages it:
 
 1. It investigates the firing against your live telemetry.
-2. It tunes the monitor if the firing was a false alarm, or opens a pull request against your repository if the problem is real.
+2. It tunes the monitor if the firing was a false alarm, proposes a fix for a real problem, or asks for an action or decision it needs from you.
 
 An incident is itself a chat: you can watch the investigation as it happens, step in, and review any pull request before it merges. Arming is opt-in per monitor; arm one only when a firing warrants an automated response.
 
@@ -22,9 +22,17 @@ An incident is itself a chat: you can watch the investigation as it happens, ste
 A firing episode opens a single incident, however many evaluations fire during it, with a cooldown after it resolves.
 </Note>
 
+## Follow the investigation
+
+The incident report shows the current status, findings, and any action the agent needs from you. Open its evidence links to inspect the charts, tables, or traces behind a conclusion. Reply in the incident chat to add context or ask the agent to check something.
+
+When several incidents turn out to be the same problem, the agent merges them into one episode so you can follow one investigation.
+
+A monitor going healthy prompts the agent to reassess; it does not automatically close the incident. A merged fix still needs to deploy and be checked against telemetry. The report distinguishes a verified fix from recovery without a confirmed permanent fix.
+
 ## Slack
 
-Incident alerts post to the `#onepatch-alerts` channel OnePatch creates in your connected Slack workspace: which monitor fired, why, and a link into the incident chat. The channel name, workspace, and connection are managed from the integrations screen.
+High-severity incidents (P0 and P1) post to the `#onepatch-alerts` channel OnePatch creates in your connected Slack workspace. Lower-severity incidents remain in the app. The Slack card updates as the investigation progresses and links to the incident. The channel name, workspace, and connection are managed from the integrations screen.
 
 ## Talking to the agent from Slack
 
