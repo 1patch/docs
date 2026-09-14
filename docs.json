@@ -39,6 +39,7 @@
               "services",
               "monitors-and-dashboards",
               "incidents-and-slack",
+              "paging",
               "verify-prs-in-prod"
             ]
           },
