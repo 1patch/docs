@@ -1,0 +1,47 @@
+---
+title: Set up paging
+description: Turn on paging, choose an on-call schedule, and tune when the agent interrupts you.
+---
+
+OnePatch's agent arms monitors, investigates incidents, and pages the on-call person when it needs human help. Pages arrive as Slack DMs or texts, separately from incident updates in your alerts channel.
+
+## Turn it on
+
+1. **Connect your team.** Invite responders under **Settings → Members** and connect Slack under **Settings → Integrations**. For DMs, each person's Slack email must match their OnePatch email.
+2. **Verify your phone.** Each responder opens **Settings → Paging**, enters a number with its country code, selects the SMS consent checkbox, and clicks **Send verification code**. Enter the code and click **Verify number**.
+3. **Choose channels.** Under **Notify me**, select **Slack me**, **Text me**, or both for each severity. Changes save automatically. Clearing all channels disables pages at that severity.
+4. **Save a schedule.** An organization admin chooses who is on call under **On-call schedule** and clicks **Save schedule**. The options are below.
+5. **Test delivery.** Each responder clicks **Send test page** and checks that their DM and text arrive. The test goes to the person clicking it; it checks delivery, independently of the schedule and paging rules.
+
+## On-call schedules
+
+| Schedule | How it works |
+|---|---|
+| **One person** | One responder until you change it. |
+| **By day** | Assign each weekday; the assignments repeat weekly. |
+| **Weekly** | Add responders in order; each takes one week, then the list repeats. |
+
+For **By day**, assign all seven days: blank days fall back to the first assigned person, starting from Monday. Day changes use the saving admin's browser timezone.
+
+**Weekly** handoffs currently happen Monday at 00:00 UTC. Saving a changed weekly list restarts the rotation from that week's Monday. For temporary coverage, edit the schedule and restore it afterward. **Remove schedule** stops new pages.
+
+## Tune when you get paged
+
+Put shared production context and rules for requesting human help in **Settings → Agent**. These [agent instructions](/agent-instructions) apply to new sessions.
+
+For your own interruptions, use **Settings → Paging → Paging rules**. Be specific about the environment, impact, and action needed:
+
+```text
+Do not page me for staging-only failures.
+Text me when production checkout is failing and recovery needs a human action.
+Use a Slack DM for decisions that can wait a few hours.
+Routine fix reviews can wait until working hours once service has recovered.
+```
+
+Click **Save rules**. The rules guide subsequent page decisions within your selected channels; they cannot enable a channel you turned off. Click **Not urgent** on an unwanted paging DM to dismiss it and add feedback to your rules.
+
+## When a page arrives
+
+Click **Acknowledge** in the Slack DM or reply `ack` to the text. Then open the incident to see what needs doing.
+
+An unanswered SMS gets an **URGENT** follow-up after five minutes, to the same person. Acknowledgment stops that follow-up; it does not resolve the incident. OnePatch does not automatically pass an unanswered page to the next responder.
