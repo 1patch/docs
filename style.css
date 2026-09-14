@@ -297,45 +297,45 @@ a {
   color: var(--op-accent) !important;
 }
 
-/* Nav logo mark — match blog header at 26px. */
+/* The supplied SVG includes the symbol and wordmark at a 561:100 ratio. */
 img.nav-logo {
-  width: 26px !important;
+  width: 145.86px !important;
   height: 26px !important;
-  max-width: 26px !important;
+  max-width: 100% !important;
   object-fit: contain;
 }
 
-/* Full logo lockup in the top-left nav. Mintlify's `logo` renders only the
- * mark; nav-brand.js appends the "onepatch" wordmark to its right so the header
- * reads as the whole logo. Type + spacing match the app's brand wordmark
- * exactly (client OnboardingFlow.tsx `Logomark`): the display face Monaspace
- * Xenon, bold, sized 0.6× the 26px mark, 10px gap. */
-.op-nav-lockup {
-  display: inline-flex !important;
-  align-items: center;
-}
-.op-nav-word {
-  margin-left: 10px;
-  font-family: "Monaspace Xenon", "Monaspace Neon", ui-monospace, monospace;
-  font-weight: 700;
-  font-size: 15.6px;
-  line-height: 1;
-  color: var(--op-ink);
+/* Footer lockup uses the same supplied artwork as the header. */
+#footer {
+  flex-wrap: wrap;
+  row-gap: 24px;
 }
 
-/* Footer brand row injected by footer-brand.js — 20px mark, same as blog. */
+#footer > .flex:first-child {
+  align-items: center;
+}
+
 .op-footer-brand {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  .op-footer-brand {
+    flex-basis: 100%;
+  }
 }
 
 .op-footer-brand .logo-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 134.64px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .op-footer-brand .logo-mark img {
@@ -362,6 +362,8 @@ img.nav-logo {
 }
 
 .op-footer-year {
+  font-family: "Monaspace Neon", ui-monospace, monospace;
+  font-size: 14px;
   color: var(--op-ink-soft);
   font-weight: 400;
   margin-left: 8px;

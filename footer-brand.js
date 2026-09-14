@@ -12,11 +12,11 @@
     // `hidden` utility is outspecified by our own `.logo-mark img` rule, so both
     // logos would render (the doubled-mark bug). Plain classes keep it robust.
     brand.innerHTML =
-      '<span class="logo-mark" aria-hidden="true">' +
-      '<img class="op-logo op-logo--light" src="/logo/onepatch-logo-light.png" alt="onepatch" />' +
-      '<img class="op-logo op-logo--dark" src="/logo/onepatch-logo.png" alt="onepatch" />' +
+      '<span class="logo-mark" role="img" aria-label="OnePatch">' +
+      '<img class="op-logo op-logo--light" src="/logo/onepatch-logo-light.svg" alt="" width="561" height="100" />' +
+      '<img class="op-logo op-logo--dark" src="/logo/onepatch-logo-dark.svg" alt="" width="561" height="100" />' +
       "</span>" +
-      '<span class="word">onepatch<span class="op-footer-year">· 2026</span></span>';
+      '<span class="op-footer-year">· 2026</span>';
 
     wrap.insertBefore(brand, wrap.firstChild);
   }

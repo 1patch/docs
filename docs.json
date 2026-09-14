@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
-  "name": "onepatch",
+  "name": "OnePatch",
   "description": "OnePatch is an AI SRE platform. You ship OpenTelemetry signals; an AI agent runs on top of them to build monitors and dashboards and respond to incidents.",
   "colors": {
     "primary": "#e2502c",
@@ -14,10 +14,10 @@
       "dark": "#0a0a0b"
     }
   },
-  "favicon": "/favicon.png",
+  "favicon": "/logo/onepatch-favicon.svg",
   "logo": {
-    "light": "/logo/onepatch-logo-light.png",
-    "dark": "/logo/onepatch-logo.png",
+    "light": "/logo/onepatch-logo-light.svg",
+    "dark": "/logo/onepatch-logo-dark.svg",
     "href": "https://www.onepatch.dev"
   },
   "navigation": {
