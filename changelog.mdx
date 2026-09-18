@@ -79,7 +79,7 @@ description: What's new in OnePatch.
 </Update>
 
 <Update label="API keys" description="Aug 2, 2026" tags={["API"]}>
-  Mint machine credentials for the MCP endpoint from the app, and rotate them without downtime.
+  Scripts and unattended agents can query production telemetry and ask OnePatch to investigate issues using an API key scoped to your workspace. See [API keys](/mcp-server#api-keys).
 </Update>
 
 <Update label="Keyboard and screen-reader support" description="Jul 15, 2026" tags={["App"]}>
@@ -90,14 +90,6 @@ description: What's new in OnePatch.
   Dashboards show how your services behaved during an incident, with filters and a shared time window across charts. Individual charts have links you can share with your team.
 </Update>
 
-<Update label="Live Slack incident cards" description="Jul 2, 2026" tags={["Slack"]}>
-  The Slack card rewrites itself as the incident moves through its phases, so the channel shows current state rather than a pile of updates.
-</Update>
-
-<Update label="Incident status card" description="Jul 1, 2026" tags={["Incidents"]}>
-  Incident chats open with a status-page-style card — what fired, what phase it's in, what changed — pinned beside the transcript.
-</Update>
-
 <Update label="Bring your own MCP servers" description="Jun 30, 2026" tags={["API"]}>
   Connect any OAuth-protected MCP server from the Integrations screen and the agent can use its tools. See [How OnePatch works](/how-onepatch-works#the-agent-over-your-data).
 </Update>
@@ -106,34 +98,10 @@ description: What's new in OnePatch.
   DM the OnePatch bot, or @-mention it in a channel and it replies in a thread. Each conversation is a real chat that also shows up in the app, with the sender's name. See [Incidents and Slack](/incidents-and-slack).
 </Update>
 
-<Update label="Longer query windows" description="Jun 16, 2026" tags={["Telemetry"]}>
-  Queries run over much longer windows and return faster. Your signals live in a ClickHouse database scoped to your workspace.
-</Update>
-
-<Update label="Isolated workspace networks" description="Jun 12, 2026" tags={["Platform"]}>
-  Every workspace runs in its own private network with signed images and no credentials shared between workspaces.
-</Update>
-
 <Update label="The agent opens pull requests" description="Jun 1, 2026" tags={["Agent"]}>
   Fixes arrive as a PR against your connected repo rather than a suggestion in chat.
 </Update>
 
-<Update label="Group chats" description="Jun 1, 2026" tags={["Chat"]}>
-  Org-wide chats where every message carries its author, so the agent knows who is speaking.
-</Update>
-
-<Update label="The agent asks questions" description="May 28, 2026" tags={["Agent"]}>
-  When the agent needs a decision mid-task, the choices render in the composer and your answer goes straight back into the run.
-</Update>
-
 <Update label="Chat while the agent works" description="May 13, 2026" tags={["Chat"]}>
   Send a message mid-response and the agent picks it up instead of making you wait for the turn to end.
-</Update>
-
-<Update label="Images in chat" description="May 13, 2026" tags={["Chat"]}>
-  Drag or paste a screenshot into the composer.
-</Update>
-
-<Update label="Per-workspace telemetry ingest" description="May 12, 2026" tags={["Telemetry"]}>
-  You get an OTLP endpoint and a token. Anything you send becomes queryable by the agent.
 </Update>
