@@ -29,16 +29,18 @@ For **By day**, assign all seven days: blank days fall back to the first assigne
 
 Put shared production context and rules for requesting human help in **Settings → Agent**. These [agent instructions](/agent-instructions) apply to new sessions.
 
-For your own interruptions, use **Settings → Paging → Paging rules**. Be specific about the environment, impact, and action needed:
+Workspace admins set **Settings → Paging → Team paging rules**. These rules apply to everyone on call. Be specific about the environment, impact, and action needed:
 
 ```text
-Do not page me for staging-only failures.
-Text me when production checkout is failing and recovery needs a human action.
+Do not page for staging-only failures.
+Text the on-call responder when production checkout is failing and recovery needs a human action.
 Use a Slack DM for decisions that can wait a few hours.
 Routine fix reviews can wait until working hours once service has recovered.
 ```
 
-Click **Save rules**. The rules guide subsequent page decisions within your selected channels; they cannot enable a channel you turned off. Click **Not urgent** on an unwanted paging DM to dismiss it and add feedback to your rules.
+Click **Save rules**. The rules guide subsequent page decisions within each responder's selected channels; they cannot enable a channel that person turned off.
+
+Click **Not urgent** on an unwanted paging DM to dismiss that page. To change future paging, an admin can follow **Add team rule**, review the suggested rule, and save it for the workspace.
 
 ## When a page arrives
 

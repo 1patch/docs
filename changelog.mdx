@@ -3,6 +3,18 @@ title: Changelog
 description: What's new in OnePatch.
 ---
 
+<Update label="On-call paging" description="Sep 17, 2026" tags={["Incidents"]}>
+  The agent investigates incidents and pages the on-call responder when it needs a human decision or action, explaining what's needed and linking to the relevant fix or evidence. Your team's rules determine what warrants an interruption, and pages follow your on-call rotation through Slack DMs or SMS. See [Set up paging](/paging).
+</Update>
+
+<Update label="Skills library" description="Sep 17, 2026" tags={["Agent"]}>
+  The agent can follow your team's procedures across conversations. Save a procedure as a skill and run it from chat with a slash command.
+</Update>
+
+<Update label="Evidence behind the diagnosis" description="Sep 9, 2026" tags={["Incidents"]}>
+  The agent shows why it reached a diagnosis and whether a fix is working, with production charts and traces alongside its findings.
+</Update>
+
 <Update label="Agent instructions" description="Sep 7, 2026" tags={["Agent"]}>
   Admins can set workspace-wide instructions under Settings → Agent — your team's conventions, production context, and rules for taking action.
 </Update>
@@ -15,8 +27,8 @@ description: What's new in OnePatch.
   Collect product analytics, crash logs, and other telemetry from native apps built with React Native and Expo. The agent investigates mobile issues alongside your backend telemetry.
 </Update>
 
-<Update label="Evidence behind the investigation" description="Sep 5, 2026" tags={["Incidents"]}>
-  Open the charts and tables behind the agent's conclusions directly from an incident report to inspect the data yourself.
+<Update label="Set up OnePatch from the terminal" description="Sep 4, 2026" tags={["API"]}>
+  OnePatch sets up your workspace and connects the repository you're working in, including the coding agents on your machine. Start with `onepatch onboard` from your terminal.
 </Update>
 
 <Update label="Coding-agent plugins" description="Sep 1, 2026" tags={["API"]}>
@@ -33,12 +45,6 @@ description: What's new in OnePatch.
 <Update label="Workspace search" description="Aug 25, 2026" tags={["App"]}>
   ⌘K finds anything in the workspace — chats, incidents, monitors, and dashboards. The agent searches the same index, so a new incident starts with a look through past ones.
 </Update>
-
-{/* Paging is under wraps — publish when announced.
-<Update label="On-call paging" description="Aug 24, 2026" tags={["Incidents"]}>
-  When an incident needs a human, the agent texts the on-call phone and escalates to a voice call if the text goes unanswered. Monitor alerts stay in Slack — a page means it actually needs you.
-</Update>
-*/}
 
 <Update label="Agent internet access" description="Aug 20, 2026" tags={["Agent"]}>
   The agent can use the internet while it investigates, scoped to a domain allowlist you control. See [Network allowlist](/network-allowlist).
